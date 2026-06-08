@@ -1,0 +1,63 @@
+# Android
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+.DS_Store
+*.jks
+*.keystore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+.env
+.env.local
+*.egg
+
+# IDE
+.vscode/
+.vs/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.pgdump
+*.sql
+
+# Logs
+*.log
+npm-debug.log*
+
+# Misc
+node_modules/
+.cache/
+.coverage/
+htmlcov/
+.pytest_cache/
