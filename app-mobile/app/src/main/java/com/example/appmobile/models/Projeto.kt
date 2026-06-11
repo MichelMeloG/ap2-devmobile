@@ -1,15 +1,21 @@
 package com.example.appmobile.models
 
-data class Projeto(
-    val nome: String,
-    val orcamentoMaximo: Double,
-    val carroId: Int,
-    val pecas: List<Peca>
-) {
-    val id: Int = 0 // ou var se for inicializado depois
-    val custoTotalCalculado: Double = pecas.sumOf { it.preco }
-    val criado_em: String? = null // Pode vir da API depois
+import com.google.gson.annotations.SerializedName
 
+data class Projeto(
+    val id: Int = 0,
+    val nome: String,
+    @SerializedName("orcamento_maximo")
+    val orcamentoMaximo: Double,
+    @SerializedName("carro_id")
+    val carroId: Int,
+    @SerializedName("pecas_ids")
+    val pecasIds: List<Int> = emptyList(),
+    @SerializedName("custo_total_calculado")
+    val custoTotalCalculado: Double = 0.0,
+    @SerializedName("criado_em")
+    val criadoEm: String? = null
+) {
     override fun toString(): String {
         return nome
     }

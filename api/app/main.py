@@ -52,15 +52,6 @@ def health_check():
     """
     return {"status": "OK"}
 
-@app.get("/init_db")
-def run_init_db():
-    import sys
-    import os
-    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-    import init_db
-    init_db.init_database()
-    return {"message": "Banco inicializado"}
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

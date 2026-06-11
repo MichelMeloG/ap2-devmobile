@@ -29,6 +29,7 @@ class SetupPecasActivity : AppCompatActivity() {
     private var orcamento: Double = 0.0
     private var nomeProjeto: String = ""
     private val pecasSelecionadas = mutableListOf<Peca>()
+    private var todasPecas = listOf<Peca>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +48,33 @@ class SetupPecasActivity : AppCompatActivity() {
 
         carregarPecas()
 
+        // Switch "Modo Track": filtra peças mecânicas (performance) quando ativado
+        switchModoAgressivo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // Modo Track: mostra apenas peças mecânicas (performance)
+                val pecasFiltradas = todasPecas.filter { it.tipo == "Mecânica" }
+                atualizarListaPecas(pecasFiltradas)
+            } else {
+                // Modo Street: mostra todas as peças
+                atualizarListaPecas(todasPecas)
+            }
+        }
+
         buttonVoltar.setOnClickListener { finish() }
 
         buttonConcluir.setOnClickListener {
-            pecasSelecionadas.clear()
+            if (pecasSelecionadas.isEmpty()) {
+                Toast.makeText(this, "Selecione ao menos uma peça", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val pecasIds = pecasSelecionadas.map { it.id }
+
             val setupIntent = Intent(this@SetupPecasActivity, DetalhesProjetoActivity::class.java)
             setupIntent.putExtra("carro_id", carroId)
             setupIntent.putExtra("orcamento", orcamento)
             setupIntent.putExtra("nome_projeto", nomeProjeto)
+            setupIntent.putIntegerArrayListExtra("pecas_ids", ArrayList(pecasIds))
             startActivity(setupIntent)
         }
     }
@@ -63,17 +83,8 @@ class SetupPecasActivity : AppCompatActivity() {
         apiService.listarPecasPorCarro(carroId).enqueue(object : Callback<List<Peca>> {
             override fun onResponse(call: Call<List<Peca>>, response: Response<List<Peca>>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val pecas = response.body()!!
-                    val pecaAdapter = PecaAdapter(pecas, this@SetupPecasActivity) { peca, selecionada ->
-                        if (selecionada) {
-                            if (!pecasSelecionadas.contains(peca)) {
-                                pecasSelecionadas.add(peca)
-                            }
-                        } else {
-                            pecasSelecionadas.remove(peca)
-                        }
-                    }
-                    recyclerViewPecas.adapter = pecaAdapter
+                    todasPecas = response.body()!!
+                    atualizarListaPecas(todasPecas)
                 }
             }
 
@@ -81,5 +92,18 @@ class SetupPecasActivity : AppCompatActivity() {
                 Toast.makeText(this@SetupPecasActivity, "Erro ao carregar peças", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun atualizarListaPecas(pecas: List<Peca>) {
+        val pecaAdapter = PecaAdapter(pecas, this@SetupPecasActivity) { peca, selecionada ->
+            if (selecionada) {
+                if (!pecasSelecionadas.contains(peca)) {
+                    pecasSelecionadas.add(peca)
+                }
+            } else {
+                pecasSelecionadas.remove(peca)
+            }
+        }
+        recyclerViewPecas.adapter = pecaAdapter
     }
 }

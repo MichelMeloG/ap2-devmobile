@@ -32,6 +32,7 @@ class DetalhesProjetoActivity : AppCompatActivity() {
     private var carroId: Int = 0
     private var orcamento: Double = 0.0
     private var nomeProjeto: String = ""
+    private var pecasIds: List<Int> = listOf()
     private var pecasSelecionadas: List<Peca> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,22 +48,23 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         carroId = intent.getIntExtra("carro_id", 0)
         orcamento = intent.getDoubleExtra("orcamento", 0.0)
         nomeProjeto = intent.getStringExtra("nome_projeto") ?: ""
+        pecasIds = intent.getIntegerArrayListExtra("pecas_ids") ?: arrayListOf()
 
         textViewNomeProjeto.text = "Projeto: $nomeProjeto"
 
         recyclerViewPecasDetalhes.layoutManager = LinearLayoutManager(this)
 
-        carregarPecasComissionadas()
+        carregarPecasSelecionadas()
 
         buttonSalvar.setOnClickListener { salvarProjeto() }
     }
 
-    private fun carregarPecasComissionadas() {
+    private fun carregarPecasSelecionadas() {
         apiService.listarPecasPorCarro(carroId).enqueue(object : Callback<List<Peca>> {
             override fun onResponse(call: Call<List<Peca>>, response: Response<List<Peca>>) {
                 if (response.isSuccessful && response.body() != null) {
-                    // Filtrar apenas selecionadas (implementar lógica de persistência)
-                    pecasSelecionadas = response.body()!!
+                    // Filtra apenas as peças que o usuário selecionou na tela anterior
+                    pecasSelecionadas = response.body()!!.filter { it.id in pecasIds }
                     
                     val pecaAdapter = PecaAdapter(pecasSelecionadas, this@DetalhesProjetoActivity) { _, _ -> }
                     recyclerViewPecasDetalhes.adapter = pecaAdapter
@@ -86,12 +88,10 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         val percentual = if (orcamento > 0) ((custoTotal / orcamento) * 100).toInt() else 0
         progressBarOrcamento.progress = percentual
 
-        textViewProgresso.text = "$percentual% de R$ ${String.format("%.2f", orcamento)}"
+        textViewProgresso.text = "R$ ${String.format("%.2f", custoTotal)} / R$ ${String.format("%.2f", orcamento)} ($percentual%)"
     }
 
     private fun salvarProjeto() {
-        val pecasIds = pecasSelecionadas.map { it.id }
-
         val projetoRequest = ProjetoRequest(nomeProjeto, orcamento, carroId, pecasIds)
 
         apiService.criarProjeto(projetoRequest).enqueue(object : Callback<Projeto> {
@@ -99,10 +99,11 @@ class DetalhesProjetoActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Toast.makeText(this@DetalhesProjetoActivity, "Projeto salvo com sucesso!", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@DetalhesProjetoActivity, DashboardActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(this@DetalhesProjetoActivity, "Erro ao salvar projeto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DetalhesProjetoActivity, "Orçamento insuficiente para as peças selecionadas", Toast.LENGTH_LONG).show()
                 }
             }
 

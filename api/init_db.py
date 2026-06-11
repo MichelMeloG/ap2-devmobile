@@ -74,6 +74,13 @@ def init_database():
     # Gol compatível com suspensão, rodas e estética
     gol.pecas = [p for p in pecas if p.tipo in ["Estética", "Mecânica"] and "Swap" not in p.nome and "Turbo" not in p.nome]
     
+    # Fiat 147 compatível com estética, suspensão, escape e buchas
+    fiat147 = session.query(Carro).filter(Carro.modelo == "Fiat 147").first()
+    fiat147.pecas = [p for p in pecas if p.nome in [
+        "Rodas TE37 Aro 15", "Suspensão Coilover", "Escape Inox",
+        "Kit Buchas Poliuretano", "Spoiler Carbono", "Pré-catalisador removido"
+    ]]
+    
     session.commit()
     
     print("✅ Banco de dados inicializado com sucesso!")

@@ -10,6 +10,7 @@ import com.example.appmobile.R
 import com.example.appmobile.adapters.ProjetoAdapter
 import com.example.appmobile.api.RetrofitClient
 import com.example.appmobile.models.Projeto
+import android.widget.Button
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,6 +20,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewProjetos: RecyclerView
     private lateinit var fabNovoProjeto: FloatingActionButton
+    private lateinit var buttonOficinas: Button
     private lateinit var projetoAdapter: ProjetoAdapter
     
     private val apiService = RetrofitClient.apiService
@@ -29,6 +31,7 @@ class DashboardActivity : AppCompatActivity() {
 
         recyclerViewProjetos = findViewById(R.id.recyclerViewProjetos)
         fabNovoProjeto = findViewById(R.id.fabNovoProjeto)
+        buttonOficinas = findViewById(R.id.buttonOficinas)
 
         recyclerViewProjetos.layoutManager = LinearLayoutManager(this)
         
@@ -47,6 +50,11 @@ class DashboardActivity : AppCompatActivity() {
 
         fabNovoProjeto.setOnClickListener {
             val intent = Intent(this@DashboardActivity, CadastroBaseActivity::class.java)
+            startActivity(intent)
+        }
+
+        buttonOficinas.setOnClickListener {
+            val intent = Intent(this@DashboardActivity, OficinaFinderActivity::class.java)
             startActivity(intent)
         }
 
