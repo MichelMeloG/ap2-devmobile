@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base
 from app.models.models import Carro, Peca, Projeto
-from app.routes import carros, pecas, projetos
+from app.routes import carros, pecas, projetos, external
 
 # Cria as tabelas no banco de dados
 Base.metadata.create_all(bind=engine)
@@ -29,6 +29,7 @@ app.add_middleware(
 app.include_router(carros.router)
 app.include_router(pecas.router)
 app.include_router(projetos.router)
+app.include_router(external.router)
 
 @app.get("/")
 def root():

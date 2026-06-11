@@ -14,7 +14,12 @@ def listar_pecas_por_carro(carro_id: int, db: Session = Depends(get_db)):
     carro = db.query(Carro).filter(Carro.id == carro_id).first()
     if not carro:
         raise HTTPException(status_code=404, detail="Carro não encontrado")
-    
+    if not carro.pecas:
+        # Se o carro for novo (vindo da API externa) e não tiver peças cadastradas,
+        # retorna todas as peças como genéricas/universais
+        todas_pecas = db.query(Peca).all()
+        return todas_pecas
+        
     return carro.pecas
 
 @router.get("", response_model=list[PecaSchema])

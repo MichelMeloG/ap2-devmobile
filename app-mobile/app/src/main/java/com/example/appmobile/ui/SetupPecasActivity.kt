@@ -28,6 +28,8 @@ class SetupPecasActivity : AppCompatActivity() {
     private var carroId: Int = 0
     private var orcamento: Double = 0.0
     private var nomeProjeto: String = ""
+    private var marcaCarro: String = ""
+    private var modeloCarro: String = ""
     private val pecasSelecionadas = mutableListOf<Peca>()
     private var todasPecas = listOf<Peca>()
 
@@ -43,6 +45,8 @@ class SetupPecasActivity : AppCompatActivity() {
         carroId = intent.getIntExtra("carro_id", 0)
         orcamento = intent.getDoubleExtra("orcamento", 0.0)
         nomeProjeto = intent.getStringExtra("nome_projeto") ?: ""
+        marcaCarro = intent.getStringExtra("marca_carro") ?: ""
+        modeloCarro = intent.getStringExtra("modelo_carro") ?: ""
 
         recyclerViewPecas.layoutManager = LinearLayoutManager(this)
 
@@ -74,6 +78,8 @@ class SetupPecasActivity : AppCompatActivity() {
             setupIntent.putExtra("carro_id", carroId)
             setupIntent.putExtra("orcamento", orcamento)
             setupIntent.putExtra("nome_projeto", nomeProjeto)
+            setupIntent.putExtra("marca_carro", marcaCarro)
+            setupIntent.putExtra("modelo_carro", modeloCarro)
             setupIntent.putIntegerArrayListExtra("pecas_ids", ArrayList(pecasIds))
             startActivity(setupIntent)
         }

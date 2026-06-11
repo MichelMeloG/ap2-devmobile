@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -18,8 +19,54 @@
         android:id="@+id/textViewNomeProjeto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:layout_marginTop="16dp" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardFichaTecnica"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ficha Técnica (Motor / Especificação)"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textViewFichaNome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/textViewFichaGeracao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/textViewFichaAnos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:layout_width="match_parent"

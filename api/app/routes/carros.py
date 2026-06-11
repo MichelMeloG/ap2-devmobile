@@ -17,8 +17,12 @@ def listar_carros(db: Session = Depends(get_db)):
 @router.post("", response_model=CarroSchema)
 def criar_carro(carro: CarroCreate, db: Session = Depends(get_db)):
     """
-    Cria um novo modelo de carro (uso interno).
+    Cria um novo modelo de carro ou retorna se já existir.
     """
+    existente = db.query(Carro).filter(Carro.modelo == carro.modelo).first()
+    if existente:
+        return existente
+        
     db_carro = Carro(modelo=carro.modelo, categoria=carro.categoria)
     db.add(db_carro)
     db.commit()

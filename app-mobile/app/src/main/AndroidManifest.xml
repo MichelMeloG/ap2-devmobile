@@ -45,6 +45,11 @@
         <activity
             android:name=".ui.OficinaFinderActivity"
             android:exported="false" />
+
+        <!-- Activity de Consulta VIN -->
+        <activity
+            android:name=".ui.ConsultaVinActivity"
+            android:exported="false" />
             
     </application>
 

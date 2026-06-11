@@ -21,6 +21,7 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var recyclerViewProjetos: RecyclerView
     private lateinit var fabNovoProjeto: FloatingActionButton
     private lateinit var buttonOficinas: Button
+    private lateinit var buttonVin: Button
     private lateinit var projetoAdapter: ProjetoAdapter
     
     private val apiService = RetrofitClient.apiService
@@ -32,6 +33,7 @@ class DashboardActivity : AppCompatActivity() {
         recyclerViewProjetos = findViewById(R.id.recyclerViewProjetos)
         fabNovoProjeto = findViewById(R.id.fabNovoProjeto)
         buttonOficinas = findViewById(R.id.buttonOficinas)
+        buttonVin = findViewById(R.id.buttonVin)
 
         recyclerViewProjetos.layoutManager = LinearLayoutManager(this)
         
@@ -55,6 +57,11 @@ class DashboardActivity : AppCompatActivity() {
 
         buttonOficinas.setOnClickListener {
             val intent = Intent(this@DashboardActivity, OficinaFinderActivity::class.java)
+            startActivity(intent)
+        }
+
+        buttonVin.setOnClickListener {
+            val intent = Intent(this@DashboardActivity, ConsultaVinActivity::class.java)
             startActivity(intent)
         }
 
