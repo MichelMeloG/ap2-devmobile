@@ -16,21 +16,21 @@ class Carro(CarroBase):
     class Config:
         from_attributes = True
 
-# === Schemas para Peças ===\r
-class PecaBase(BaseModel):\r
-    nome: str\r
-    preco: float\r
-    tipo: str\r
-    ganho_hp: int = 0\r
-    descricao: str = ""\r
-\r
-class PecaCreate(PecaBase):\r
-    pass\r
-\r
-class Peca(PecaBase):\r
-    id: int\r
-    \r
-    class Config:\r
+# === Schemas para Peças ===
+class PecaBase(BaseModel):
+    nome: str
+    preco: float
+    tipo: str
+    ganho_hp: int = 0
+    descricao: str = ""
+
+class PecaCreate(PecaBase):
+    pass
+
+class Peca(PecaBase):
+    id: int
+    
+    class Config:
         from_attributes = True
 
 # === Schemas para Projetos ===
