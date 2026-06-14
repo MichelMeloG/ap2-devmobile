@@ -143,7 +143,15 @@ async def consultar_vin(vin: str):
     except Exception:
         pass # Falhou NHTSA, prossegue para o fallback local
     
-    # Fallback Offline (Para carros BR que falham no NHTSA)
+    # Tentativa 2: Usar a IA (Gemini) para decodificar o VIN
+    from app.services.ai_service import decodificar_vin_com_ia
+    dados_ia = decodificar_vin_com_ia(vin)
+    if dados_ia and dados_ia.get("marca") and dados_ia.get("modelo"):
+        # Garante que o VIN seja o requisitado
+        dados_ia["vin"] = vin
+        return dados_ia
+    
+    # Fallback Offline (Para carros BR que falham no NHTSA e sem API Key)
     wmi = vin[0:3]
     ano_digito = vin[9]
     
