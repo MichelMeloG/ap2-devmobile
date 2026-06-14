@@ -30,7 +30,7 @@ Retorne APENAS um array JSON válido sem markdown ou backticks. Cada objeto deve
 - "descricao": string (Breve descrição de 1 linha sobre o que a peça faz e por que é boa para esse carro)
 """
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         
         texto = response.text.strip()
@@ -87,7 +87,7 @@ Use strings vazias "" para campos que não conseguir determinar com certeza:
 - "pais_origem": string (ex: "Brasil", "Alemanha")
 """
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         
         texto = response.text.strip()
@@ -138,7 +138,7 @@ Inclua:
 Use emojis para deixar o texto vivo! Responda apenas o texto do resumo, sem formatação markdown.
 """
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
