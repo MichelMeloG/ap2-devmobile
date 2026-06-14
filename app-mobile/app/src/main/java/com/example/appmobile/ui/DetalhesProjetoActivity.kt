@@ -90,7 +90,7 @@ class DetalhesProjetoActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     pecasSelecionadas = response.body()!!.filter { it.id in pecasIds }
                     
-                    val pecaAdapter = PecaAdapter(pecasSelecionadas, this@DetalhesProjetoActivity) { _, _ -> }
+                    val pecaAdapter = PecaAdapter(pecasSelecionadas, this@DetalhesProjetoActivity, true) { _, _ -> }
                     recyclerViewPecasDetalhes.adapter = pecaAdapter
 
                     atualizarProgresso()

@@ -121,17 +121,21 @@ def gerar_resumo_projeto_com_ia(modelo_carro: str, pecas: list[dict]) -> str:
     custo_total = sum(p.get("preco", 0) for p in pecas)
 
     prompt = f"""
-Você é um consultor de tuning automotivo brasileiro.
-Um cliente quer modificar um {modelo_carro} com as seguintes peças:
+Atue como um mecânico chefe e especialista em tuning automotivo brasileiro.
+Um cliente montou um projeto para um {modelo_carro} com as seguintes peças:
 
 {pecas_texto}
 
 Custo total: R$ {custo_total:.2f}
 Ganho total estimado: +{ganho_total} hp
 
-Escreva um resumo curto e empolgante (máximo 4 frases) sobre o projeto.
-Inclua: ganho de performance estimado, ordem recomendada de instalação, e uma dica profissional.
-Responda apenas o texto puro, sem aspas, sem markdown, sem JSON.
+Escreva um resumo curto e super empolgante (máximo 4 a 5 frases) analisando esse projeto.
+Seja criativo e fale com propriedade. Comente sobre a compatibilidade das peças escolhidas.
+Inclua:
+1. Uma opinião profissional sobre a escolha das peças.
+2. Como o carro vai se comportar (ronco, aceleração, visual, etc).
+3. Uma dica valiosa de "próximo passo" ou "cuidado na instalação".
+Use emojis para deixar o texto vivo! Responda apenas o texto do resumo, sem formatação markdown.
 """
     try:
         model = genai.GenerativeModel('gemini-2.0-flash')

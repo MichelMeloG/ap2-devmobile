@@ -1,56 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/bg_primary"
-    android:padding="16dp">
+    android:background="@color/bg_primary">
 
     <TextView
+        android:id="@+id/tituloTela"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="⚙️ Selecione as Peças"
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
-        android:gravity="center" />
+        android:gravity="center"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <!-- Filtros (Chips) -->
+    <HorizontalScrollView
+        android:id="@+id/scrollChips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="4dp">
+        android:scrollbars="none"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/tituloTela">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="🔥 Modo Track (Performance)"
-            android:textSize="14sp"
-            android:textColor="@color/text_secondary" />
-
-        <Switch
-            android:id="@+id/switchModoAgressivo"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFiltros"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:thumbTint="@color/accent_primary"
-            android:trackTint="@color/bg_input" />
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            app:singleLine="true">
 
-    </LinearLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipTodas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Todas"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:checked="true" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMecanica"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔧 Mecânica"
+                style="@style/Widget.Material3.Chip.Filter" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipEstetica"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✨ Estética"
+                style="@style/Widget.Material3.Chip.Filter" />
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- Lista de peças -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPecas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="12dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/scrollChips"
+        app:layout_constraintBottom_toTopOf="@id/layoutResumoBottom" />
 
     <!-- Loading IA -->
     <LinearLayout
         android:id="@+id/layoutLoadingPecas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/scrollChips"
+        app:layout_constraintBottom_toTopOf="@id/layoutResumoBottom">
 
         <ProgressBar
             android:layout_width="56dp"
@@ -75,39 +106,104 @@
             android:layout_marginTop="8dp" />
     </LinearLayout>
 
-    <!-- Lista de peças -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPecas"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Barra de ações -->
+    <!-- Resumo Bottom Panel -->
     <LinearLayout
-        android:id="@+id/layoutBotoes"
+        android:id="@+id/layoutResumoBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="12dp">
+        android:orientation="vertical"
+        android:background="@color/bg_surface"
+        android:elevation="8dp"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonVoltar"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="← Voltar"
-            style="@style/RacingButtonOutline"
-            android:layout_marginEnd="8dp" />
+        <!-- Info Orçamento / HP -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonConcluir"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="Concluir →"
-            style="@style/RacingButton"
-            android:layout_marginStart="8dp" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Selecionado:"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/textoCustoTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R$ 0,00 / R$ 0,00"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <!-- Total HP Badge -->
+            <TextView
+                android:id="@+id/textoHpTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🚀 +0 HP"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_hp_badge"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp" />
+
+        </LinearLayout>
+
+        <!-- Barra de Progresso Orçamento -->
+        <ProgressBar
+            android:id="@+id/progressBarOrcamentoTotal"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/accent_primary"
+            android:progressBackgroundTint="@color/bg_input"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Botões -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonVoltar"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:text="← Voltar"
+                style="@style/RacingButtonOutline"
+                android:layout_marginEnd="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonConcluir"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:text="Concluir →"
+                style="@style/RacingButton"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

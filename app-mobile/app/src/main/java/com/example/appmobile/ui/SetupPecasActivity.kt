@@ -1,12 +1,16 @@
 package com.example.appmobile.ui
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.Switch
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmobile.R
@@ -14,6 +18,7 @@ import com.example.appmobile.adapters.PecaAdapter
 import com.example.appmobile.api.RetrofitClient
 import com.example.appmobile.models.Peca
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.ChipGroup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,10 +26,15 @@ import retrofit2.Response
 class SetupPecasActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewPecas: RecyclerView
-    private lateinit var switchModoAgressivo: Switch
+    private lateinit var chipGroupFiltros: ChipGroup
     private lateinit var buttonVoltar: MaterialButton
     private lateinit var buttonConcluir: MaterialButton
     private lateinit var layoutLoadingPecas: LinearLayout
+    
+    // Bottom Panel
+    private lateinit var textoCustoTotal: TextView
+    private lateinit var textoHpTotal: TextView
+    private lateinit var progressBarOrcamentoTotal: ProgressBar
     
     private val apiService = RetrofitClient.apiService
     
@@ -33,7 +43,8 @@ class SetupPecasActivity : AppCompatActivity() {
     private var nomeProjeto: String = ""
     private var marcaCarro: String = ""
     private var modeloCarro: String = ""
-    private val pecasSelecionadas = mutableListOf<Peca>()
+    
+    private val pecasSelecionadas = mutableSetOf<Peca>()
     private var todasPecas = listOf<Peca>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,10 +52,13 @@ class SetupPecasActivity : AppCompatActivity() {
         setContentView(R.layout.activity_setup_pecas)
 
         recyclerViewPecas = findViewById(R.id.recyclerViewPecas)
-        switchModoAgressivo = findViewById(R.id.switchModoAgressivo)
+        chipGroupFiltros = findViewById(R.id.chipGroupFiltros)
         buttonVoltar = findViewById(R.id.buttonVoltar)
         buttonConcluir = findViewById(R.id.buttonConcluir)
         layoutLoadingPecas = findViewById(R.id.layoutLoadingPecas)
+        textoCustoTotal = findViewById(R.id.textoCustoTotal)
+        textoHpTotal = findViewById(R.id.textoHpTotal)
+        progressBarOrcamentoTotal = findViewById(R.id.progressBarOrcamentoTotal)
 
         carroId = intent.getIntExtra("carro_id", 0)
         orcamento = intent.getDoubleExtra("orcamento", 0.0)
@@ -55,15 +69,19 @@ class SetupPecasActivity : AppCompatActivity() {
         recyclerViewPecas.layoutManager = LinearLayoutManager(this)
 
         carregarPecas()
+        atualizarPainelResumo()
 
-        // Switch "Modo Track": filtra peças mecânicas (performance) quando ativado
-        switchModoAgressivo.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                val pecasFiltradas = todasPecas.filter { it.tipo == "Mecânica" }
-                atualizarListaPecas(pecasFiltradas)
-            } else {
-                atualizarListaPecas(todasPecas)
+        // Lógica dos Chips de Filtro
+        chipGroupFiltros.setOnCheckedStateChangeListener { group, checkedIds ->
+            if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
+            
+            val checkedId = checkedIds.first()
+            val pecasFiltradas = when (checkedId) {
+                R.id.chipMecanica -> todasPecas.filter { it.tipo == "Mecânica" }
+                R.id.chipEstetica -> todasPecas.filter { it.tipo == "Estética" }
+                else -> todasPecas // chipTodas
             }
+            atualizarListaPecas(pecasFiltradas)
         }
 
         buttonVoltar.setOnClickListener { finish() }
@@ -87,8 +105,29 @@ class SetupPecasActivity : AppCompatActivity() {
         }
     }
 
+    private fun atualizarPainelResumo() {
+        val custoTotal = pecasSelecionadas.sumOf { it.preco }
+        val hpTotal = pecasSelecionadas.sumOf { it.ganho_hp }
+
+        textoCustoTotal.text = "R$ ${String.format("%.2f", custoTotal)} / R$ ${String.format("%.2f", orcamento)}"
+        textoHpTotal.text = "🚀 +$hpTotal HP"
+
+        if (orcamento > 0) {
+            val progress = ((custoTotal / orcamento) * 100).toInt()
+            progressBarOrcamentoTotal.progress = progress
+            
+            // Muda a cor pra vermelho se estourar o orçamento
+            if (custoTotal > orcamento) {
+                textoCustoTotal.setTextColor(ContextCompat.getColor(this, R.color.danger))
+                progressBarOrcamentoTotal.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.danger))
+            } else {
+                textoCustoTotal.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
+                progressBarOrcamentoTotal.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.accent_primary))
+            }
+        }
+    }
+
     private fun carregarPecas() {
-        // Mostra loading e esconde lista
         layoutLoadingPecas.visibility = View.VISIBLE
         recyclerViewPecas.visibility = View.GONE
 
@@ -112,14 +151,13 @@ class SetupPecasActivity : AppCompatActivity() {
     }
 
     private fun atualizarListaPecas(pecas: List<Peca>) {
-        val pecaAdapter = PecaAdapter(pecas, this@SetupPecasActivity) { peca, selecionada ->
+        val pecaAdapter = PecaAdapter(pecas, this@SetupPecasActivity, false) { peca, selecionada ->
             if (selecionada) {
-                if (!pecasSelecionadas.contains(peca)) {
-                    pecasSelecionadas.add(peca)
-                }
+                pecasSelecionadas.add(peca)
             } else {
                 pecasSelecionadas.remove(peca)
             }
+            atualizarPainelResumo()
         }
         recyclerViewPecas.adapter = pecaAdapter
     }
