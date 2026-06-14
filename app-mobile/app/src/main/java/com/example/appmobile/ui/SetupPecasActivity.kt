@@ -197,9 +197,12 @@ class SetupPecasActivity : AppCompatActivity() {
     private fun atualizarListaPecas(pecas: List<Peca>) {
         val pecaAdapter = PecaAdapter(pecas, this@SetupPecasActivity, false) { peca, selecionada ->
             if (selecionada) {
-                pecasSelecionadas.add(peca)
+                // Evitar duplicatas acidentais
+                if (pecasSelecionadas.none { it.id == peca.id }) {
+                    pecasSelecionadas.add(peca)
+                }
             } else {
-                pecasSelecionadas.remove(peca)
+                pecasSelecionadas.removeAll { it.id == peca.id }
             }
             atualizarPainelResumo()
         }
