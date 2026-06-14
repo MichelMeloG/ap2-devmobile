@@ -89,18 +89,45 @@ class ConsultaVinActivity : AppCompatActivity() {
     }
 
     private fun exibirResultado(resultado: VinResult) {
-        textViewVinCarro.text = "${resultado.marca} ${resultado.modelo} ${resultado.ano}"
+        val titulo = listOf(resultado.marca, resultado.modelo, resultado.ano)
+            .filter { !it.isNullOrBlank() }
+            .joinToString(" ")
+        textViewVinCarro.text = titulo
         
-        val detalhes = """
-            Motor: ${resultado.motor} (${resultado.cilindros} cil / ${resultado.potencia_hp} hp)
-            Combustível: ${resultado.combustivel}
-            Carroceria: ${resultado.carroceria} (${resultado.portas} portas)
-            Tração: ${resultado.tracao}
-            Transmissão: ${resultado.transmissao}
-            Fabricante: ${resultado.fabricante} (${resultado.pais_origem})
-        """.trimIndent()
+        val detalhes = mutableListOf<String>()
         
-        textViewVinDetalhes.text = detalhes
+        // Motor e Performance
+        val infoMotor = mutableListOf<String>()
+        if (!resultado.motor.isNullOrBlank()) infoMotor.add(resultado.motor)
+        if (!resultado.cilindros.isNullOrBlank()) infoMotor.add("${resultado.cilindros} cil")
+        if (!resultado.potencia_hp.isNullOrBlank()) infoMotor.add("${resultado.potencia_hp} hp")
+        if (infoMotor.isNotEmpty()) detalhes.add("Motor: ${infoMotor.joinToString(" / ")}")
+        
+        // Combustível
+        if (!resultado.combustivel.isNullOrBlank()) detalhes.add("Combustível: ${resultado.combustivel}")
+        
+        // Carroceria
+        val infoCarroceria = mutableListOf<String>()
+        if (!resultado.carroceria.isNullOrBlank()) infoCarroceria.add(resultado.carroceria)
+        if (!resultado.portas.isNullOrBlank()) infoCarroceria.add("${resultado.portas} portas")
+        if (infoCarroceria.isNotEmpty()) detalhes.add("Carroceria: ${infoCarroceria.joinToString(" - ")}")
+        
+        // Tração e Transmissão
+        if (!resultado.tracao.isNullOrBlank()) detalhes.add("Tração: ${resultado.tracao}")
+        if (!resultado.transmissao.isNullOrBlank()) detalhes.add("Transmissão: ${resultado.transmissao}")
+        
+        // Fabricante e Origem
+        val infoOrigem = mutableListOf<String>()
+        if (!resultado.fabricante.isNullOrBlank()) infoOrigem.add(resultado.fabricante)
+        if (!resultado.pais_origem.isNullOrBlank()) infoOrigem.add(resultado.pais_origem)
+        if (infoOrigem.isNotEmpty()) detalhes.add("Fabricante: ${infoOrigem.joinToString(" / ")}")
+        
+        if (detalhes.isEmpty()) {
+            textViewVinDetalhes.text = "Detalhes não disponíveis para este chassi."
+        } else {
+            textViewVinDetalhes.text = detalhes.joinToString("\n")
+        }
+        
         cardResultadoVin.visibility = View.VISIBLE
     }
 
