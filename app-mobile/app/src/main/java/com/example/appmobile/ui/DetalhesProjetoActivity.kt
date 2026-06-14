@@ -175,8 +175,8 @@ class DetalhesProjetoActivity : AppCompatActivity() {
                         textViewFichaNome.text = trimName.replace(" Base", "", ignoreCase = true)
                         textViewFichaGeracao.text = "${trim.generation ?: ""} - ${trim.serie ?: ""}".trim(' ', '-')
 
-                        val startYear = trim.trimStartYear ?: trim.generationYearBegin ?: ""
-                        val endYear = trim.trimEndYear ?: trim.generationYearEnd ?: ""
+                        val startYear = trim.trimStartYear?.toString() ?: trim.generationYearBegin ?: ""
+                        val endYear = trim.trimEndYear?.toString() ?: trim.generationYearEnd ?: ""
                         
                         if (startYear.isNotEmpty() && endYear.isNotEmpty() && startYear != endYear) {
                             textViewFichaAnos.text = "Ano: $startYear a $endYear"
