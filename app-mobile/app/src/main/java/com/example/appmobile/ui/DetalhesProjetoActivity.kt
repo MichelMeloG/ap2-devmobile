@@ -3,7 +3,6 @@ package com.example.appmobile.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -18,6 +17,7 @@ import com.example.appmobile.api.RetrofitClient
 import com.example.appmobile.models.Peca
 import com.example.appmobile.models.Projeto
 import com.example.appmobile.models.Trim
+import com.google.android.material.button.MaterialButton
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,7 +32,10 @@ class DetalhesProjetoActivity : AppCompatActivity() {
     private lateinit var progressBarOrcamento: ProgressBar
     private lateinit var textViewProgresso: TextView
     private lateinit var recyclerViewPecasDetalhes: RecyclerView
-    private lateinit var buttonSalvar: Button
+    private lateinit var buttonSalvar: MaterialButton
+    private lateinit var cardResumoIA: CardView
+    private lateinit var textViewResumoIA: TextView
+    private lateinit var progressBarResumoIA: ProgressBar
     
     private val apiService = RetrofitClient.apiService
 
@@ -57,6 +60,9 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         textViewProgresso = findViewById(R.id.textViewProgresso)
         recyclerViewPecasDetalhes = findViewById(R.id.recyclerViewPecasDetalhes)
         buttonSalvar = findViewById(R.id.buttonSalvar)
+        cardResumoIA = findViewById(R.id.cardResumoIA)
+        textViewResumoIA = findViewById(R.id.textViewResumoIA)
+        progressBarResumoIA = findViewById(R.id.progressBarResumoIA)
 
         carroId = intent.getIntExtra("carro_id", 0)
         orcamento = intent.getDoubleExtra("orcamento", 0.0)
@@ -65,7 +71,7 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         modeloCarro = intent.getStringExtra("modelo_carro") ?: ""
         pecasIds = intent.getIntegerArrayListExtra("pecas_ids") ?: arrayListOf()
 
-        textViewNomeProjeto.text = "Projeto: $nomeProjeto"
+        textViewNomeProjeto.text = "🏁 $nomeProjeto"
 
         recyclerViewPecasDetalhes.layoutManager = LinearLayoutManager(this)
 
@@ -82,13 +88,13 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         apiService.listarPecasPorCarro(carroId).enqueue(object : Callback<List<Peca>> {
             override fun onResponse(call: Call<List<Peca>>, response: Response<List<Peca>>) {
                 if (response.isSuccessful && response.body() != null) {
-                    // Filtra apenas as peças que o usuário selecionou na tela anterior
                     pecasSelecionadas = response.body()!!.filter { it.id in pecasIds }
                     
                     val pecaAdapter = PecaAdapter(pecasSelecionadas, this@DetalhesProjetoActivity) { _, _ -> }
                     recyclerViewPecasDetalhes.adapter = pecaAdapter
 
                     atualizarProgresso()
+                    carregarResumoIA()
                 }
             }
 
@@ -104,7 +110,7 @@ class DetalhesProjetoActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     val trims = response.body()!!
                     if (trims.isNotEmpty()) {
-                        val trim = trims.first() // Pega o primeiro como exemplo
+                        val trim = trims.first()
                         cardFichaTecnica.visibility = View.VISIBLE
                         textViewFichaNome.text = trim.trim ?: "Motor não especificado"
                         textViewFichaGeracao.text = "${trim.generation ?: ""} - ${trim.serie ?: ""}".trim(' ', '-')
@@ -122,16 +128,55 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         })
     }
 
+    private fun carregarResumoIA() {
+        if (pecasSelecionadas.isEmpty()) return
+
+        cardResumoIA.visibility = View.VISIBLE
+        progressBarResumoIA.visibility = View.VISIBLE
+        textViewResumoIA.text = "Analisando seu projeto..."
+
+        val modeloCarro = "$marcaCarro $modeloCarro".trim()
+        val pecasData = pecasSelecionadas.map { mapOf(
+            "nome" to it.nome,
+            "preco" to it.preco,
+            "ganho_hp" to it.ganho_hp
+        )}
+        val requestBody = mapOf(
+            "modelo_carro" to modeloCarro,
+            "pecas" to pecasData
+        )
+
+        apiService.gerarResumoIA(requestBody).enqueue(object : Callback<Map<String, String>> {
+            override fun onResponse(call: Call<Map<String, String>>, response: Response<Map<String, String>>) {
+                progressBarResumoIA.visibility = View.GONE
+                if (response.isSuccessful && response.body() != null) {
+                    val resumo = response.body()!!["resumo"] ?: "Resumo indisponível."
+                    textViewResumoIA.text = resumo
+                } else {
+                    textViewResumoIA.text = "Não foi possível gerar o resumo da IA."
+                }
+            }
+
+            override fun onFailure(call: Call<Map<String, String>>, t: Throwable) {
+                progressBarResumoIA.visibility = View.GONE
+                textViewResumoIA.text = "Erro de conexão ao gerar resumo."
+            }
+        })
+    }
+
     private fun atualizarProgresso() {
         var custoTotal = 0.0
+        var ganhoTotalHp = 0
         for (peca in pecasSelecionadas) {
             custoTotal += peca.preco
+            ganhoTotalHp += peca.ganho_hp
         }
 
         val percentual = if (orcamento > 0) ((custoTotal / orcamento) * 100).toInt() else 0
         progressBarOrcamento.progress = percentual
 
-        textViewProgresso.text = "R$ ${String.format("%.2f", custoTotal)} / R$ ${String.format("%.2f", orcamento)} ($percentual%)"
+        val hpText = if (ganhoTotalHp > 0) " | +${ganhoTotalHp} hp" else ""
+        textViewProgresso.text = "R$ ${String.format("%.2f", custoTotal)} / R$ ${String.format("%.2f", orcamento)} ($percentual%)$hpText"
     }
 
     private fun salvarProjeto() {
@@ -140,7 +185,7 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         apiService.criarProjeto(projetoRequest).enqueue(object : Callback<Projeto> {
             override fun onResponse(call: Call<Projeto>, response: Response<Projeto>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@DetalhesProjetoActivity, "Projeto salvo com sucesso!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DetalhesProjetoActivity, "Projeto salvo com sucesso! 🏁", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@DetalhesProjetoActivity, DashboardActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)

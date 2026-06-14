@@ -2,7 +2,8 @@ package com.example.appmobile.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import com.example.appmobile.R
 import com.example.appmobile.adapters.PecaAdapter
 import com.example.appmobile.api.RetrofitClient
 import com.example.appmobile.models.Peca
+import com.google.android.material.button.MaterialButton
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,8 +22,9 @@ class SetupPecasActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewPecas: RecyclerView
     private lateinit var switchModoAgressivo: Switch
-    private lateinit var buttonVoltar: Button
-    private lateinit var buttonConcluir: Button
+    private lateinit var buttonVoltar: MaterialButton
+    private lateinit var buttonConcluir: MaterialButton
+    private lateinit var layoutLoadingPecas: LinearLayout
     
     private val apiService = RetrofitClient.apiService
     
@@ -41,6 +44,7 @@ class SetupPecasActivity : AppCompatActivity() {
         switchModoAgressivo = findViewById(R.id.switchModoAgressivo)
         buttonVoltar = findViewById(R.id.buttonVoltar)
         buttonConcluir = findViewById(R.id.buttonConcluir)
+        layoutLoadingPecas = findViewById(R.id.layoutLoadingPecas)
 
         carroId = intent.getIntExtra("carro_id", 0)
         orcamento = intent.getDoubleExtra("orcamento", 0.0)
@@ -55,11 +59,9 @@ class SetupPecasActivity : AppCompatActivity() {
         // Switch "Modo Track": filtra peças mecânicas (performance) quando ativado
         switchModoAgressivo.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                // Modo Track: mostra apenas peças mecânicas (performance)
                 val pecasFiltradas = todasPecas.filter { it.tipo == "Mecânica" }
                 atualizarListaPecas(pecasFiltradas)
             } else {
-                // Modo Street: mostra todas as peças
                 atualizarListaPecas(todasPecas)
             }
         }
@@ -86,8 +88,15 @@ class SetupPecasActivity : AppCompatActivity() {
     }
 
     private fun carregarPecas() {
+        // Mostra loading e esconde lista
+        layoutLoadingPecas.visibility = View.VISIBLE
+        recyclerViewPecas.visibility = View.GONE
+
         apiService.listarPecasPorCarro(carroId).enqueue(object : Callback<List<Peca>> {
             override fun onResponse(call: Call<List<Peca>>, response: Response<List<Peca>>) {
+                layoutLoadingPecas.visibility = View.GONE
+                recyclerViewPecas.visibility = View.VISIBLE
+
                 if (response.isSuccessful && response.body() != null) {
                     todasPecas = response.body()!!
                     atualizarListaPecas(todasPecas)
@@ -95,7 +104,9 @@ class SetupPecasActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<Peca>>, t: Throwable) {
-                Toast.makeText(this@SetupPecasActivity, "Erro ao carregar peças", Toast.LENGTH_SHORT).show()
+                layoutLoadingPecas.visibility = View.GONE
+                recyclerViewPecas.visibility = View.VISIBLE
+                Toast.makeText(this@SetupPecasActivity, "Erro ao carregar peças: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }

@@ -1,83 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/bg_primary"
     android:padding="16dp">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cadastro de Projeto"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:gravity="center" />
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Marca"
-        android:textSize="14sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="4dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🏎️ Novo Projeto"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:gravity="center"
+            android:layout_marginBottom="20dp" />
 
-    <Spinner
-        android:id="@+id/spinnerMarcas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp" />
+        <!-- Nome do Projeto -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nome do Projeto"
+            android:textSize="12sp"
+            android:textColor="@color/text_hint"
+            android:layout_marginBottom="4dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Modelo"
-        android:textSize="14sp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="4dp" />
+        <EditText
+            android:id="@+id/editTextNomeProjeto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ex: Track Day Civic"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:textSize="15sp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
+            android:background="@color/bg_input"
+            android:padding="12dp" />
 
-    <Spinner
-        android:id="@+id/spinnerModelos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp" />
+        <!-- Marca -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Marca"
+            android:textSize="12sp"
+            android:textColor="@color/text_hint"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Orçamento Máximo (R$)"
-        android:textSize="14sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp" />
+        <Spinner
+            android:id="@+id/spinnerMarcas"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/bg_input"
+            android:padding="8dp" />
 
-    <EditText
-        android:id="@+id/editTextOrcamento"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ex: 15000.00"
-        android:inputType="numberDecimal"
-        android:padding="12dp" />
+        <!-- Modelo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Modelo"
+            android:textSize="12sp"
+            android:textColor="@color/text_hint"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Nome do Projeto"
-        android:textSize="14sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp" />
+        <Spinner
+            android:id="@+id/spinnerModelos"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/bg_input"
+            android:padding="8dp" />
 
-    <EditText
-        android:id="@+id/editTextNomeProjeto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ex: Track Day Setup"
-        android:padding="12dp" />
+        <!-- Orçamento -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Orçamento (R$)"
+            android:textSize="12sp"
+            android:textColor="@color/text_hint"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
 
-    <Button
-        android:id="@+id/buttonProximo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Próximo"
-        android:layout_marginTop="24dp" />
+        <EditText
+            android:id="@+id/editTextOrcamento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ex: 15000"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:textSize="15sp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
+            android:background="@color/bg_input"
+            android:padding="12dp" />
 
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonProximo"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Próximo →"
+            android:textSize="16sp"
+            style="@style/RacingButton"
+            android:layout_marginTop="24dp" />
+
+    </LinearLayout>
+</ScrollView>

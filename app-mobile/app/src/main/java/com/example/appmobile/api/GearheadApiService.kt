@@ -65,4 +65,8 @@ interface GearheadApiService {
 
     @GET("/api/external/vin/{vin}")
     fun consultarVin(@Path("vin") vin: String): Call<VinResult>
+
+    // === Endpoint de IA ===
+    @POST("/pecas/resumo-ia")
+    fun gerarResumoIA(@Body dados: Map<String, @JvmSuppressWildcards Any>): Call<Map<String, String>>
 }

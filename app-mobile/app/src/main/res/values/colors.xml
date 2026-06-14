@@ -2,4 +2,36 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Tema Automotivo Dark -->
+    <color name="bg_primary">#FF121212</color>
+    <color name="bg_surface">#FF1E1E1E</color>
+    <color name="bg_card">#FF2A2A2A</color>
+    <color name="bg_input">#FF333333</color>
+
+    <!-- Accent Racing Orange -->
+    <color name="accent_primary">#FFFF6D00</color>
+    <color name="accent_primary_dark">#FFE65100</color>
+    <color name="accent_secondary">#FFFFAB40</color>
+
+    <!-- Texto -->
+    <color name="text_primary">#FFFAFAFA</color>
+    <color name="text_secondary">#FFB0B0B0</color>
+    <color name="text_hint">#FF757575</color>
+
+    <!-- Status -->
+    <color name="success">#FF4CAF50</color>
+    <color name="danger">#FFE53935</color>
+    <color name="warning">#FFFFC107</color>
+    <color name="info">#FF42A5F5</color>
+
+    <!-- HP Badge -->
+    <color name="hp_badge_bg">#33FF6D00</color>
+    <color name="hp_badge_text">#FFFF6D00</color>
+
+    <!-- Mecânica / Estética tags -->
+    <color name="tag_mecanica">#3342A5F5</color>
+    <color name="tag_mecanica_text">#FF42A5F5</color>
+    <color name="tag_estetica">#33AB47BC</color>
+    <color name="tag_estetica_text">#FFAB47BC</color>
 </resources>

@@ -1,53 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/bg_primary"
     android:padding="16dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Selecione as Peças"
-        android:textSize="20sp"
+        android:text="⚙️ Selecione as Peças"
+        android:textSize="22sp"
         android:textStyle="bold"
+        android:textColor="@color/text_primary"
         android:gravity="center" />
 
-    <Switch
-        android:id="@+id/switchModoAgressivo"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Modo Track (Agressivo)"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="4dp">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🔥 Modo Track (Performance)"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary" />
+
+        <Switch
+            android:id="@+id/switchModoAgressivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumbTint="@color/accent_primary"
+            android:trackTint="@color/bg_input" />
+
+    </LinearLayout>
+
+    <!-- Loading IA -->
+    <LinearLayout
+        android:id="@+id/layoutLoadingPecas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:indeterminateTint="@color/accent_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🤖 A IA está gerando peças\npersonalizadas para o seu carro..."
+            android:textColor="@color/accent_secondary"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Isso pode levar alguns segundos"
+            android:textColor="@color/text_hint"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
+    <!-- Lista de peças -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPecas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <!-- Barra de ações -->
     <LinearLayout
+        android:id="@+id/layoutBotoes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="12dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonVoltar"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="Voltar"
+            android:text="← Voltar"
+            style="@style/RacingButtonOutline"
             android:layout_marginEnd="8dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonConcluir"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="Concluir"
+            android:text="Concluir →"
+            style="@style/RacingButton"
             android:layout_marginStart="8dp" />
 
     </LinearLayout>

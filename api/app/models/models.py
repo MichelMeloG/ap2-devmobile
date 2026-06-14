@@ -29,6 +29,8 @@ class Peca(Base):
     nome = Column(String, unique=True, index=True)
     preco = Column(Float)
     tipo = Column(String)
+    ganho_hp = Column(Integer, default=0)
+    descricao = Column(String, default="")
     
     # Relacionamentos
     carros = relationship("Carro", secondary=carro_peca_compatibilidade, back_populates="pecas")

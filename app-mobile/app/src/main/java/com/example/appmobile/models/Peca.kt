@@ -5,7 +5,8 @@ data class Peca(
     val nome: String,
     val preco: Double,
     val tipo: String,
-    var selecionada: Boolean = false
+    val ganho_hp: Int = 0,
+    val descricao: String = ""
 ) {
     override fun toString(): String {
         return "$nome (R$ ${String.format("%.2f", preco)})"

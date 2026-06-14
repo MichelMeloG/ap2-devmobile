@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg_primary"
     android:padding="16dp">
 
     <LinearLayout
@@ -10,81 +11,171 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Título -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Consulta de Veículo por Chassi (VIN)"
-            android:textSize="20sp"
+            android:text="🔍 Consulta por Chassi (VIN)"
+            android:textSize="22sp"
             android:textStyle="bold"
+            android:textColor="@color/text_primary"
             android:gravity="center"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Digite os 17 caracteres do chassi:"
             android:textSize="14sp"
+            android:textColor="@color/text_secondary"
             android:layout_marginBottom="8dp" />
 
         <EditText
             android:id="@+id/editTextVin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ex: 1HGBH41JXMN109186"
+            android:hint="Ex: 93HGD17404Z133030"
             android:inputType="textCapCharacters"
             android:maxLength="17"
-            android:minHeight="48dp" />
+            android:minHeight="52dp"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
+            android:background="@color/bg_input"
+            android:padding="14dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonConsultarVin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🔍 Consultar"
-            android:layout_marginTop="8dp" />
+            android:layout_height="52dp"
+            android:text="🤖 Consultar com IA"
+            android:textSize="16sp"
+            style="@style/RacingButton"
+            android:layout_marginTop="12dp" />
 
-        <ProgressBar
-            android:id="@+id/progressBarVin"
-            android:layout_width="wrap_content"
+        <!-- Loading -->
+        <LinearLayout
+            android:id="@+id/layoutLoading"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:visibility="gone" />
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp"
+            android:visibility="gone">
 
+            <ProgressBar
+                android:id="@+id/progressBarVin"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminateTint="@color/accent_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🤖 A IA está analisando o chassi..."
+                android:textColor="@color/accent_secondary"
+                android:textSize="14sp"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+
+        <!-- Card Resultado -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardResultadoVin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
+            android:layout_marginTop="20dp"
+            app:cardBackgroundColor="@color/bg_card"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
             android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/textViewVinCarro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
+                    android:textColor="@color/text_primary"
                     android:layout_marginBottom="8dp" />
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="3dp"
+                    android:background="@color/accent_primary"
+                    android:layout_marginBottom="12dp" />
 
                 <TextView
                     android:id="@+id/textViewVinDetalhes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
-                    android:lineSpacingExtra="4dp" />
+                    android:textColor="@color/text_secondary"
+                    android:lineSpacingExtra="6dp" />
 
-                <Button
-                    android:id="@+id/buttonUsarVin"
+                <!-- Campos extras ao usar o veículo -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_input"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="✅ Usar este Veículo"
+                    android:text="Nome do Projeto"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_hint"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/editTextNomeProjetoVin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ex: Projeto Track Day"
+                    android:inputType="text"
+                    android:minHeight="44dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
+                    android:background="@color/bg_input"
+                    android:padding="12dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Orçamento (R$)"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_hint"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/editTextOrcamentoVin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ex: 15000"
+                    android:inputType="numberDecimal"
+                    android:minHeight="44dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
+                    android:background="@color/bg_input"
+                    android:padding="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonUsarVin"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="🚀 Iniciar Projeto"
+                    android:textSize="16sp"
+                    style="@style/RacingButton"
                     android:layout_marginTop="16dp" />
 
             </LinearLayout>
