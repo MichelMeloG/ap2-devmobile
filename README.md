@@ -56,4 +56,32 @@ Na página de Detalhes do Projeto, você tem a visão de cima sobre a sua obra d
 - **Inteligência Artificial Nativa**: Consulta de VINs misteriosos e feedbacks reais da sua montagem via AI.
 
 ---
+
+## 💻 Aspectos Técnicos e Setup da API
+
+Este aplicativo foi desenvolvido como projeto da disciplina de Desenvolvimento Mobile (AP2) e conta com integração a uma robusta API REST.
+
+### Tecnologias Utilizadas
+- **Aplicativo Android (Frontend)**: Desenvolvido em Kotlin, utilizando boas práticas, Intents (explícitas e implícitas), RecyclerViews, e a implementação de **Fragments** para injeção dinâmica de Views (como o Resumo da IA).
+- **Backend (API REST)**: Desenvolvido em Python utilizando o framework **FastAPI**.
+- **Banco de Dados**: Persistência de dados feita em banco de dados relacional robusto (**PostgreSQL** hospedado no Google Cloud SQL, integrado via SQLAlchemy).
+
+### ☁️ API na Nuvem (Bônus AP2)
+
+Nossa API REST está em produção e hospedada no **Google Cloud Run**, permitindo que o aplicativo funcione sem a necessidade de rodar o servidor localmente!
+Isso garante uma experiência fluída e atende ao requisito bônus da faculdade de *deploy em ambiente de nuvem*.
+
+- **Endpoint Base**: `https://appmobile-api-908144816287.us-central1.run.app`
+
+### 📖 Documentação da API (Swagger)
+O backend atende à obrigatoriedade de documentação Open API. Você pode explorar e testar todos os endpoints (Cadastro, Consulta, Alteração e Remoção) diretamente no navegador através da nuvem:
+- **Swagger UI (Online)**: [https://appmobile-api-908144816287.us-central1.run.app/docs](https://appmobile-api-908144816287.us-central1.run.app/docs)
+
+### Como Rodar o Backend Localmente (Opcional)
+Caso deseje rodar a API de forma local para desenvolvimento:
+1. Navegue até a pasta `api` do projeto e instale as dependências com `pip install -r requirements.txt`.
+2. Inicie o servidor FastAPI: `uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload`
+3. O Swagger local estará em: `http://localhost:8000/docs`
+
+---
 *GearUp - Construa seu projeto perfeito antes de sujar as mãos de graxa.*

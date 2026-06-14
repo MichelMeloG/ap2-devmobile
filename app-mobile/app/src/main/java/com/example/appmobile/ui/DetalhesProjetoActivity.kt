@@ -34,9 +34,6 @@ class DetalhesProjetoActivity : AppCompatActivity() {
     private lateinit var textViewProgresso: TextView
     private lateinit var recyclerViewPecasDetalhes: RecyclerView
     private lateinit var buttonSalvar: MaterialButton
-    private lateinit var cardResumoIA: CardView
-    private lateinit var textViewResumoIA: TextView
-    private lateinit var progressBarResumoIA: ProgressBar
     
     private val apiService = RetrofitClient.apiService
 
@@ -61,9 +58,6 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         textViewProgresso = findViewById(R.id.textViewProgresso)
         recyclerViewPecasDetalhes = findViewById(R.id.recyclerViewPecasDetalhes)
         buttonSalvar = findViewById(R.id.buttonSalvar)
-        cardResumoIA = findViewById(R.id.cardResumoIA)
-        textViewResumoIA = findViewById(R.id.textViewResumoIA)
-        progressBarResumoIA = findViewById(R.id.progressBarResumoIA)
 
         val projetoId = intent.getIntExtra("projeto_id", 0)
 
@@ -159,7 +153,7 @@ class DetalhesProjetoActivity : AppCompatActivity() {
                     recyclerViewPecasDetalhes.adapter = pecaAdapter
 
                     atualizarProgresso()
-                    carregarResumoIA()
+                    injetarAiResumoFragment()
                 }
             }
 
@@ -201,40 +195,24 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         })
     }
 
-    private fun carregarResumoIA() {
+    private fun injetarAiResumoFragment() {
         if (pecasSelecionadas.isEmpty()) return
+        
+        val modeloCompleto = "$marcaCarro $modeloCarro".trim()
+        val nomes = ArrayList(pecasSelecionadas.map { it.nome })
+        val precos = pecasSelecionadas.map { it.preco }.toDoubleArray()
+        val ganhos = ArrayList(pecasSelecionadas.map { it.ganho_hp })
 
-        cardResumoIA.visibility = View.VISIBLE
-        progressBarResumoIA.visibility = View.VISIBLE
-        textViewResumoIA.text = "Analisando seu projeto..."
-
-        val modeloCarro = "$marcaCarro $modeloCarro".trim()
-        val pecasData = pecasSelecionadas.map { mapOf(
-            "nome" to it.nome,
-            "preco" to it.preco,
-            "ganho_hp" to it.ganho_hp
-        )}
-        val requestBody = mapOf(
-            "modelo_carro" to modeloCarro,
-            "pecas" to pecasData
+        val fragment = com.example.appmobile.ui.fragments.AiResumoFragment.newInstance(
+            modeloCompleto,
+            nomes,
+            precos,
+            ganhos
         )
 
-        apiService.gerarResumoIA(requestBody).enqueue(object : Callback<Map<String, String>> {
-            override fun onResponse(call: Call<Map<String, String>>, response: Response<Map<String, String>>) {
-                progressBarResumoIA.visibility = View.GONE
-                if (response.isSuccessful && response.body() != null) {
-                    val resumo = response.body()!!["resumo"] ?: "Resumo indisponível."
-                    textViewResumoIA.text = resumo
-                } else {
-                    textViewResumoIA.text = "Não foi possível gerar o resumo da IA."
-                }
-            }
-
-            override fun onFailure(call: Call<Map<String, String>>, t: Throwable) {
-                progressBarResumoIA.visibility = View.GONE
-                textViewResumoIA.text = "Erro de conexão ao gerar resumo."
-            }
-        })
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerAiResumo, fragment)
+            .commit()
     }
 
     private fun atualizarProgresso() {
