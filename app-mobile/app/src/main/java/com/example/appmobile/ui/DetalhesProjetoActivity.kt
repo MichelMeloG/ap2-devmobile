@@ -17,6 +17,7 @@ import com.example.appmobile.api.RetrofitClient
 import com.example.appmobile.models.Peca
 import com.example.appmobile.models.Projeto
 import com.example.appmobile.models.Trim
+import com.example.appmobile.models.Carro
 import com.google.android.material.button.MaterialButton
 import retrofit2.Call
 import retrofit2.Callback

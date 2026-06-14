@@ -41,6 +41,9 @@ def criar_projeto(projeto: ProjetoCreate, db: Session = Depends(get_db)):
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)
+    
+    # Preenche pecas_ids para o Pydantic serializar
+    db_projeto.pecas_ids = [p.id for p in db_projeto.pecas]
     return db_projeto
 
 @router.get("", response_model=list[ProjetoSchema])
@@ -49,6 +52,8 @@ def listar_projetos(db: Session = Depends(get_db)):
     Retorna a lista de todos os projetos salvos.
     """
     projetos = db.query(Projeto).all()
+    for proj in projetos:
+        proj.pecas_ids = [p.id for p in proj.pecas]
     return projetos
 
 @router.get("/{projeto_id}", response_model=ProjetoSchema)
@@ -59,6 +64,8 @@ def obter_projeto(projeto_id: int, db: Session = Depends(get_db)):
     projeto = db.query(Projeto).filter(Projeto.id == projeto_id).first()
     if not projeto:
         raise HTTPException(status_code=404, detail="Projeto não encontrado")
+    
+    projeto.pecas_ids = [p.id for p in projeto.pecas]
     return projeto
 
 @router.put("/{projeto_id}", response_model=ProjetoSchema)
@@ -92,6 +99,7 @@ def atualizar_projeto(projeto_id: int, projeto_update: ProjetoUpdate, db: Sessio
     
     db.commit()
     db.refresh(projeto)
+    projeto.pecas_ids = [p.id for p in projeto.pecas]
     return projeto
 
 @router.delete("/{projeto_id}")

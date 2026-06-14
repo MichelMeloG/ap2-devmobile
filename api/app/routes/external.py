@@ -4,96 +4,39 @@ from fastapi import APIRouter, HTTPException
 
 router = APIRouter(prefix="/api/external", tags=["external"])
 
-API_NINJAS_KEY = os.getenv("API_NINJAS_KEY", "")
-API_NINJAS_BASE = "https://api.api-ninjas.com/v1"
 NHTSA_BASE = "https://vpic.nhtsa.dot.gov/api/vehicles"
 
 
-# ========== API Ninjas — Marcas, Modelos, Trims ==========
+# ========== Mock Data API — Marcas, Modelos, Trims ==========
 
 @router.get("/marcas")
 async def listar_marcas():
     """
-    Retorna lista de marcas de veículos via API Ninjas. Com fallback mock.
+    Retorna lista de marcas de veículos (mock).
     """
-    if not API_NINJAS_KEY:
-        return _get_mock_marcas()
-    
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                f"{API_NINJAS_BASE}/carmakes",
-                headers={"X-Api-Key": API_NINJAS_KEY},
-                timeout=10.0
-            )
-        if response.status_code == 200:
-            return response.json()
-    except Exception:
-        pass
-    
-    return _get_mock_marcas()
-
+    marcas = ["Acura", "Audi", "BMW", "Chevrolet", "Dodge", "Ferrari", "Fiat", "Ford", "Honda", "Hyundai", "Jeep", "Kia", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Peugeot", "Porsche", "Renault", "Subaru", "Toyota", "Volkswagen", "Volvo"]
+    return [{"make": m} for m in marcas]
 
 @router.get("/modelos")
 async def listar_modelos(marca: str):
     """
-    Retorna lista de modelos de uma marca via API Ninjas. Com fallback mock.
+    Retorna lista de modelos de uma marca (mock).
     """
-    if not API_NINJAS_KEY:
-        return _get_mock_modelos(marca)
-    
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                f"{API_NINJAS_BASE}/carmodels",
-                params={"make": marca},
-                headers={"X-Api-Key": API_NINJAS_KEY},
-                timeout=10.0
-            )
-        if response.status_code == 200:
-            return response.json()
-    except Exception:
-        pass
-        
-    return _get_mock_modelos(marca)
-
+    if marca.lower() == "honda":
+        modelos = ["Civic", "Accord", "Fit", "HR-V", "CR-V", "S2000"]
+    elif marca.lower() == "volkswagen":
+        modelos = ["Golf", "Jetta", "Polo", "Passat", "Tiguan", "Up!"]
+    elif marca.lower() == "ford":
+        modelos = ["Mustang", "Focus", "Fiesta", "Fusion", "Ranger"]
+    else:
+        modelos = ["Modelo A", "Modelo B", "Modelo C"]
+    return [{"model": m} for m in modelos]
 
 @router.get("/trims")
 async def listar_trims(marca: str, modelo: str):
     """
-    Retorna trims/specs de um veículo via API Ninjas. Fallback mock.
+    Retorna trims/specs de um veículo (mock).
     """
-    if not API_NINJAS_KEY:
-        return _get_mock_trims(marca, modelo)
-    
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                f"{API_NINJAS_BASE}/cartrims",
-                params={"make": marca, "model": modelo, "limit": 10},
-                headers={"X-Api-Key": API_NINJAS_KEY},
-                timeout=10.0
-            )
-        if response.status_code == 200:
-            return response.json()
-    except Exception:
-        pass
-        
-    return _get_mock_trims(marca, modelo)
-
-def _get_mock_marcas():
-    return ["Acura", "Audi", "BMW", "Chevrolet", "Dodge", "Ferrari", "Fiat", "Ford", "Honda", "Hyundai", "Jeep", "Kia", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Peugeot", "Porsche", "Renault", "Subaru", "Toyota", "Volkswagen", "Volvo"]
-
-def _get_mock_modelos(marca: str):
-    if marca.lower() == "honda":
-        return ["Civic", "Accord", "Fit", "HR-V", "CR-V", "S2000"]
-    elif marca.lower() == "volkswagen":
-        return ["Golf", "Jetta", "Polo", "Passat", "Tiguan", "Up!"]
-    elif marca.lower() == "ford":
-        return ["Mustang", "Focus", "Fiesta", "Fusion", "Ranger"]
-    return ["Modelo A", "Modelo B", "Modelo C"]
-
-def _get_mock_trims(marca: str, modelo: str):
     return [{
         "make": marca,
         "model": modelo,
