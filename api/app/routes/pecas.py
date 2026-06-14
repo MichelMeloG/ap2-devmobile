@@ -51,6 +51,16 @@ def listar_todas_pecas(db: Session = Depends(get_db)):
     pecas = db.query(Peca).all()
     return pecas
 
+@router.delete("/clear")
+def limpar_pecas(db: Session = Depends(get_db)):
+    """
+    Limpa todas as peças do banco para forçar a IA a recriá-las.
+    """
+    from sqlalchemy import text
+    db.execute(text("TRUNCATE TABLE pecas CASCADE"))
+    db.commit()
+    return {"status": "Peças apagadas com sucesso"}
+
 @router.post("", response_model=PecaSchema)
 def criar_peca(peca: PecaCreate, db: Session = Depends(get_db)):
     """

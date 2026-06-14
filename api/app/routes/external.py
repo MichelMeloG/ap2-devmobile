@@ -14,7 +14,7 @@ async def listar_marcas():
     """
     Retorna lista de marcas de veículos (mock).
     """
-    marcas = ["Acura", "Audi", "BMW", "Chevrolet", "Dodge", "Ferrari", "Fiat", "Ford", "Honda", "Hyundai", "Jeep", "Kia", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Peugeot", "Porsche", "Renault", "Subaru", "Toyota", "Volkswagen", "Volvo"]
+    marcas = ["Audi", "BMW", "Chevrolet", "Dodge", "Ferrari", "Fiat", "Ford", "Honda", "Hyundai", "Jeep", "Lamborghini", "Mercedes-Benz", "Nissan", "Porsche", "Toyota", "Volkswagen"]
     return [{"make": m} for m in marcas]
 
 @router.get("/modelos")
@@ -56,7 +56,7 @@ async def listar_modelos(marca: str):
     elif m == "lamborghini":
         modelos = ["Huracan", "Aventador", "Urus", "Gallardo"]
     else:
-        modelos = ["Hatch", "Sedan", "SUV", "Pickup", "Esportivo"]
+        modelos = []
     
     return [{"model": m} for m in modelos]
 

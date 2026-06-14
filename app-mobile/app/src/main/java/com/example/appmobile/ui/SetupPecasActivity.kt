@@ -65,11 +65,17 @@ class SetupPecasActivity : AppCompatActivity() {
         nomeProjeto = intent.getStringExtra("nome_projeto") ?: ""
         marcaCarro = intent.getStringExtra("marca_carro") ?: ""
         modeloCarro = intent.getStringExtra("modelo_carro") ?: ""
+        
+        val pecasIdsAnteriores = intent.getIntegerArrayListExtra("pecas_ids") ?: arrayListOf()
 
         recyclerViewPecas.layoutManager = LinearLayoutManager(this)
 
-        carregarPecas()
-        atualizarPainelResumo()
+        carregarPecas(pecasIdsAnteriores)
+
+        val projetoId = intent.getIntExtra("projeto_id", 0)
+        if (projetoId > 0) {
+            buttonConcluir.text = "Salvar Alterações"
+        }
 
         // Lógica dos Chips de Filtro
         chipGroupFiltros.setOnCheckedStateChangeListener { group, checkedIds ->
@@ -94,14 +100,44 @@ class SetupPecasActivity : AppCompatActivity() {
 
             val pecasIds = pecasSelecionadas.map { it.id }
 
-            val setupIntent = Intent(this@SetupPecasActivity, DetalhesProjetoActivity::class.java)
-            setupIntent.putExtra("carro_id", carroId)
-            setupIntent.putExtra("orcamento", orcamento)
-            setupIntent.putExtra("nome_projeto", nomeProjeto)
-            setupIntent.putExtra("marca_carro", marcaCarro)
-            setupIntent.putExtra("modelo_carro", modeloCarro)
-            setupIntent.putIntegerArrayListExtra("pecas_ids", ArrayList(pecasIds))
-            startActivity(setupIntent)
+            if (projetoId > 0) {
+                // Atualizar projeto existente
+                val request = com.example.appmobile.api.ProjetoRequest(
+                    nome = nomeProjeto,
+                    orcamento_maximo = orcamento,
+                    carro_id = carroId,
+                    pecas_ids = pecasIds
+                )
+                apiService.atualizarProjeto(projetoId, request).enqueue(object : Callback<com.example.appmobile.models.Projeto> {
+                    override fun onResponse(call: Call<com.example.appmobile.models.Projeto>, response: Response<com.example.appmobile.models.Projeto>) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(this@SetupPecasActivity, "Peças atualizadas!", Toast.LENGTH_SHORT).show()
+                            // Volta para a tela de detalhes que recarregará
+                            val setupIntent = Intent(this@SetupPecasActivity, DetalhesProjetoActivity::class.java)
+                            setupIntent.putExtra("projeto_id", projetoId)
+                            setupIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(setupIntent)
+                            finish()
+                        } else {
+                            Toast.makeText(this@SetupPecasActivity, "Erro ao atualizar. Orçamento insuficiente?", Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<com.example.appmobile.models.Projeto>, t: Throwable) {
+                        Toast.makeText(this@SetupPecasActivity, "Erro de rede", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            } else {
+                // Novo projeto
+                val setupIntent = Intent(this@SetupPecasActivity, DetalhesProjetoActivity::class.java)
+                setupIntent.putExtra("carro_id", carroId)
+                setupIntent.putExtra("orcamento", orcamento)
+                setupIntent.putExtra("nome_projeto", nomeProjeto)
+                setupIntent.putExtra("marca_carro", marcaCarro)
+                setupIntent.putExtra("modelo_carro", modeloCarro)
+                setupIntent.putIntegerArrayListExtra("pecas_ids", ArrayList(pecasIds))
+                startActivity(setupIntent)
+            }
         }
     }
 
@@ -127,7 +163,7 @@ class SetupPecasActivity : AppCompatActivity() {
         }
     }
 
-    private fun carregarPecas() {
+    private fun carregarPecas(pecasIdsAnteriores: ArrayList<Int>) {
         layoutLoadingPecas.visibility = View.VISIBLE
         recyclerViewPecas.visibility = View.GONE
 
@@ -138,7 +174,13 @@ class SetupPecasActivity : AppCompatActivity() {
 
                 if (response.isSuccessful && response.body() != null) {
                     todasPecas = response.body()!!
+                    
+                    // Pré-seleciona as peças existentes
+                    pecasSelecionadas.clear()
+                    pecasSelecionadas.addAll(todasPecas.filter { it.id in pecasIdsAnteriores })
+                    
                     atualizarListaPecas(todasPecas)
+                    atualizarPainelResumo()
                 }
             }
 

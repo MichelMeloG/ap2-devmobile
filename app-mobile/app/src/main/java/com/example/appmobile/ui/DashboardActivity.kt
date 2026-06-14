@@ -119,15 +119,19 @@ class DashboardActivity : AppCompatActivity() {
         val editNome = android.widget.EditText(this)
         editNome.hint = "Nome do Projeto"
         editNome.setText(projeto.nome)
+        editNome.setTextColor(android.graphics.Color.BLACK)
+        editNome.setHintTextColor(android.graphics.Color.GRAY)
         layout.addView(editNome)
 
         val editOrcamento = android.widget.EditText(this)
         editOrcamento.hint = "Orçamento Máximo"
         editOrcamento.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
         editOrcamento.setText(projeto.orcamentoMaximo.toString())
+        editOrcamento.setTextColor(android.graphics.Color.BLACK)
+        editOrcamento.setHintTextColor(android.graphics.Color.GRAY)
         layout.addView(editOrcamento)
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        androidx.appcompat.app.AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert)
             .setTitle("Editar Projeto")
             .setView(layout)
             .setPositiveButton("Salvar") { _, _ ->

@@ -92,8 +92,21 @@ class DetalhesProjetoActivity : AppCompatActivity() {
     }
 
     private fun carregarProjetoExistente(projetoId: Int) {
-        buttonSalvar.visibility = View.GONE
+        buttonSalvar.visibility = View.VISIBLE
+        buttonSalvar.text = "✏️ Editar Peças"
         
+        buttonSalvar.setOnClickListener {
+            val editIntent = Intent(this@DetalhesProjetoActivity, SetupPecasActivity::class.java)
+            editIntent.putExtra("projeto_id", projetoId)
+            editIntent.putExtra("carro_id", carroId)
+            editIntent.putExtra("orcamento", orcamento)
+            editIntent.putExtra("nome_projeto", nomeProjeto)
+            editIntent.putExtra("marca_carro", marcaCarro)
+            editIntent.putExtra("modelo_carro", modeloCarro)
+            editIntent.putIntegerArrayListExtra("pecas_ids", ArrayList(pecasIds))
+            startActivity(editIntent)
+        }
+
         apiService.obterProjeto(projetoId).enqueue(object : Callback<Projeto> {
             override fun onResponse(call: Call<Projeto>, response: Response<Projeto>) {
                 if (response.isSuccessful && response.body() != null) {

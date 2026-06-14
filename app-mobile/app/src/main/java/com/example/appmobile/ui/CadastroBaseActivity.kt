@@ -61,9 +61,10 @@ class CadastroBaseActivity : AppCompatActivity() {
                     val marcas = response.body()!!
                     val adapter = ArrayAdapter(
                         this@CadastroBaseActivity,
-                        android.R.layout.simple_spinner_dropdown_item,
+                        R.layout.item_spinner_text,
                         marcas
                     )
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinnerMarcas.adapter = adapter
                 } else {
                     Toast.makeText(this@CadastroBaseActivity, "Erro ao carregar marcas (verifique a API KEY)", Toast.LENGTH_LONG).show()
@@ -83,9 +84,10 @@ class CadastroBaseActivity : AppCompatActivity() {
                     val modelos = response.body()!!
                     val adapter = ArrayAdapter(
                         this@CadastroBaseActivity,
-                        android.R.layout.simple_spinner_dropdown_item,
+                        R.layout.item_spinner_text,
                         modelos
                     )
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinnerModelos.adapter = adapter
                 }
             }
