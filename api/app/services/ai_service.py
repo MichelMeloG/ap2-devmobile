@@ -129,12 +129,13 @@ Um cliente montou um projeto para um {modelo_carro} com as seguintes peças:
 Custo total: R$ {custo_total:.2f}
 Ganho total estimado: +{ganho_total} hp
 
-Escreva um resumo curto e super empolgante (máximo 4 a 5 frases) analisando esse projeto.
-Seja criativo e fale com propriedade. Comente sobre a compatibilidade das peças escolhidas.
+Escreva um resumo curto e super empolgante (máximo 3 a 4 frases) analisando APENAS as peças escolhidas neste projeto.
+Seja criativo e fale com propriedade. 
 Inclua:
-1. Uma opinião profissional sobre a escolha das peças.
-2. Como o carro vai se comportar (ronco, aceleração, visual, etc).
-3. Uma dica valiosa de "próximo passo" ou "cuidado na instalação".
+1. Uma opinião profissional sobre a qualidade e compatibilidade da escolha das peças em conjunto.
+2. Como o carro vai se comportar com esse setup específico (ronco, aceleração, visual, dinâmica, etc).
+
+IMPORTANTE: NÃO dê sugestões de próximas peças, não ofereça dicas de próximos passos e não sugira o que fazer depois. Apenas comente o que o usuário já escolheu.
 Use emojis para deixar o texto vivo! Responda apenas o texto do resumo, sem formatação markdown.
 """
     try:

@@ -177,7 +177,8 @@ class DetalhesProjetoActivity : AppCompatActivity() {
                     if (trims.isNotEmpty()) {
                         val trim = trims.first()
                         cardFichaTecnica.visibility = View.VISIBLE
-                        textViewFichaNome.text = trim.trim ?: "Motor não especificado"
+                        val trimName = trim.trim ?: "Motor não especificado"
+                        textViewFichaNome.text = trimName.replace(" Base", "", ignoreCase = true)
                         textViewFichaGeracao.text = "${trim.generation ?: ""} - ${trim.serie ?: ""}".trim(' ', '-')
                         
                         val startYear = trim.trimStartYear ?: trim.generationYearBegin ?: ""

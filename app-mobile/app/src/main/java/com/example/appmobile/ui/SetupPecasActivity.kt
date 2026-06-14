@@ -177,7 +177,9 @@ class SetupPecasActivity : AppCompatActivity() {
                     
                     // Pré-seleciona as peças existentes
                     pecasSelecionadas.clear()
-                    pecasSelecionadas.addAll(todasPecas.filter { it.id in pecasIdsAnteriores })
+                    val pecasAnteriores = todasPecas.filter { it.id in pecasIdsAnteriores }
+                    pecasAnteriores.forEach { it.selecionada = true }
+                    pecasSelecionadas.addAll(pecasAnteriores)
                     
                     atualizarListaPecas(todasPecas)
                     atualizarPainelResumo()

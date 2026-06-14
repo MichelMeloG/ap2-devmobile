@@ -39,7 +39,7 @@ class ProjetoAdapter(
 
     class ProjetoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nomeTextView: TextView = itemView.findViewById(R.id.nomeProjeto)
-        private val carroTextView: TextView = itemView.findViewById(R.id.carroProjeto)
+
         private val orcamentoTextView: TextView = itemView.findViewById(R.id.orcamentoProjeto)
         private val custoTextView: TextView = itemView.findViewById(R.id.custoProjeto)
         private val cardView: CardView = itemView.findViewById(R.id.cardProjeto)

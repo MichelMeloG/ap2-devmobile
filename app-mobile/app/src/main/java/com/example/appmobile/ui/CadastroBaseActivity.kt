@@ -64,7 +64,7 @@ class CadastroBaseActivity : AppCompatActivity() {
                         R.layout.item_spinner_text,
                         marcas
                     )
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    adapter.setDropDownViewResource(R.layout.item_spinner_dropdown_text)
                     spinnerMarcas.adapter = adapter
                 } else {
                     Toast.makeText(this@CadastroBaseActivity, "Erro ao carregar marcas (verifique a API KEY)", Toast.LENGTH_LONG).show()
@@ -87,7 +87,7 @@ class CadastroBaseActivity : AppCompatActivity() {
                         R.layout.item_spinner_text,
                         modelos
                     )
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    adapter.setDropDownViewResource(R.layout.item_spinner_dropdown_text)
                     spinnerModelos.adapter = adapter
                 }
             }

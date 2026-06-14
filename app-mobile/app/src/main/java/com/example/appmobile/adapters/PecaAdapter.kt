@@ -64,7 +64,8 @@ class PecaAdapter(
                     descricaoPecaTextView?.visibility = View.GONE
                 }
 
-                // Cor do tipo (Mecânica = azul, Estética = roxo)
+                // Tipo e Cor (Mecânica = azul, Estética = roxo)
+                tipoPecaTextView?.text = peca.tipo
                 if (peca.tipo == "Mecânica") {
                     tipoPecaTextView?.setTextColor(ContextCompat.getColor(context, R.color.tag_mecanica_text))
                     tipoPecaTextView?.setBackgroundColor(ContextCompat.getColor(context, R.color.tag_mecanica))
