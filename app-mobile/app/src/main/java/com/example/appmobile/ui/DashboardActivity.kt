@@ -49,7 +49,7 @@ class DashboardActivity : AppCompatActivity() {
             }
 
             override fun onDeletarClick(projeto: Projeto) {
-                androidx.appcompat.app.AlertDialog.Builder(this@DashboardActivity)
+                androidx.appcompat.app.AlertDialog.Builder(this@DashboardActivity, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert)
                     .setTitle("Excluir Projeto")
                     .setMessage("Tem certeza que deseja deletar o projeto '${projeto.nome}'?")
                     .setPositiveButton("Sim") { _, _ ->
@@ -126,7 +126,7 @@ class DashboardActivity : AppCompatActivity() {
         val editOrcamento = android.widget.EditText(this)
         editOrcamento.hint = "Orçamento Máximo"
         editOrcamento.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-        editOrcamento.setText(projeto.orcamentoMaximo.toString())
+        editOrcamento.setText(java.math.BigDecimal(projeto.orcamentoMaximo).toPlainString())
         editOrcamento.setTextColor(android.graphics.Color.BLACK)
         editOrcamento.setHintTextColor(android.graphics.Color.GRAY)
         layout.addView(editOrcamento)
