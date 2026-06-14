@@ -64,24 +64,75 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         textViewResumoIA = findViewById(R.id.textViewResumoIA)
         progressBarResumoIA = findViewById(R.id.progressBarResumoIA)
 
-        carroId = intent.getIntExtra("carro_id", 0)
-        orcamento = intent.getDoubleExtra("orcamento", 0.0)
-        nomeProjeto = intent.getStringExtra("nome_projeto") ?: ""
-        marcaCarro = intent.getStringExtra("marca_carro") ?: ""
-        modeloCarro = intent.getStringExtra("modelo_carro") ?: ""
-        pecasIds = intent.getIntegerArrayListExtra("pecas_ids") ?: arrayListOf()
-
-        textViewNomeProjeto.text = "🏁 $nomeProjeto"
+        val projetoId = intent.getIntExtra("projeto_id", 0)
 
         recyclerViewPecasDetalhes.layoutManager = LinearLayoutManager(this)
 
-        carregarPecasSelecionadas()
-        
-        if (marcaCarro.isNotEmpty() && modeloCarro.isNotEmpty()) {
-            carregarFichaTecnica()
-        }
+        if (projetoId > 0) {
+            carregarProjetoExistente(projetoId)
+        } else {
+            carroId = intent.getIntExtra("carro_id", 0)
+            orcamento = intent.getDoubleExtra("orcamento", 0.0)
+            nomeProjeto = intent.getStringExtra("nome_projeto") ?: ""
+            marcaCarro = intent.getStringExtra("marca_carro") ?: ""
+            modeloCarro = intent.getStringExtra("modelo_carro") ?: ""
+            pecasIds = intent.getIntegerArrayListExtra("pecas_ids") ?: arrayListOf()
 
-        buttonSalvar.setOnClickListener { salvarProjeto() }
+            textViewNomeProjeto.text = "🏁 $nomeProjeto"
+
+            carregarPecasSelecionadas()
+            
+            if (marcaCarro.isNotEmpty() && modeloCarro.isNotEmpty()) {
+                carregarFichaTecnica()
+            }
+
+            buttonSalvar.setOnClickListener { salvarProjeto() }
+        }
+    }
+
+    private fun carregarProjetoExistente(projetoId: Int) {
+        buttonSalvar.visibility = View.GONE
+        
+        apiService.obterProjeto(projetoId).enqueue(object : Callback<Projeto> {
+            override fun onResponse(call: Call<Projeto>, response: Response<Projeto>) {
+                if (response.isSuccessful && response.body() != null) {
+                    val projeto = response.body()!!
+                    nomeProjeto = projeto.nome
+                    orcamento = projeto.orcamentoMaximo
+                    carroId = projeto.carroId
+                    pecasIds = projeto.pecasIds
+                    
+                    textViewNomeProjeto.text = "🏁 $nomeProjeto"
+                    
+                    apiService.listarCarros().enqueue(object : Callback<List<Carro>> {
+                        override fun onResponse(call: Call<List<Carro>>, res: Response<List<Carro>>) {
+                            if (res.isSuccessful && res.body() != null) {
+                                val carro = res.body()!!.find { it.id == carroId }
+                                if (carro != null) {
+                                    val parts = carro.modelo.split(" ")
+                                    if (parts.isNotEmpty()) {
+                                        marcaCarro = parts[0]
+                                        modeloCarro = parts.drop(1).joinToString(" ")
+                                        carregarFichaTecnica()
+                                    }
+                                }
+                            }
+                            carregarPecasSelecionadas()
+                        }
+
+                        override fun onFailure(call: Call<List<Carro>>, t: Throwable) {
+                            carregarPecasSelecionadas()
+                        }
+                    })
+                } else {
+                    Toast.makeText(this@DetalhesProjetoActivity, "Erro ao carregar projeto", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Projeto>, t: Throwable) {
+                Toast.makeText(this@DetalhesProjetoActivity, "Erro de conexão", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun carregarPecasSelecionadas() {

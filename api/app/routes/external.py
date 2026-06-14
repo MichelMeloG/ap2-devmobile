@@ -14,66 +14,95 @@ NHTSA_BASE = "https://vpic.nhtsa.dot.gov/api/vehicles"
 @router.get("/marcas")
 async def listar_marcas():
     """
-    Retorna lista de marcas de veículos via API Ninjas.
+    Retorna lista de marcas de veículos via API Ninjas. Com fallback mock.
     """
     if not API_NINJAS_KEY:
-        raise HTTPException(status_code=500, detail="API_NINJAS_KEY não configurada")
+        return _get_mock_marcas()
     
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            f"{API_NINJAS_BASE}/carmakes",
-            headers={"X-Api-Key": API_NINJAS_KEY},
-            timeout=10.0
-        )
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{API_NINJAS_BASE}/carmakes",
+                headers={"X-Api-Key": API_NINJAS_KEY},
+                timeout=10.0
+            )
+        if response.status_code == 200:
+            return response.json()
+    except Exception:
+        pass
     
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Erro ao consultar marcas")
-    
-    return response.json()
+    return _get_mock_marcas()
 
 
 @router.get("/modelos")
 async def listar_modelos(marca: str):
     """
-    Retorna lista de modelos de uma marca via API Ninjas.
+    Retorna lista de modelos de uma marca via API Ninjas. Com fallback mock.
     """
     if not API_NINJAS_KEY:
-        raise HTTPException(status_code=500, detail="API_NINJAS_KEY não configurada")
+        return _get_mock_modelos(marca)
     
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            f"{API_NINJAS_BASE}/carmodels",
-            params={"make": marca},
-            headers={"X-Api-Key": API_NINJAS_KEY},
-            timeout=10.0
-        )
-    
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Erro ao consultar modelos")
-    
-    return response.json()
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{API_NINJAS_BASE}/carmodels",
+                params={"make": marca},
+                headers={"X-Api-Key": API_NINJAS_KEY},
+                timeout=10.0
+            )
+        if response.status_code == 200:
+            return response.json()
+    except Exception:
+        pass
+        
+    return _get_mock_modelos(marca)
 
 
 @router.get("/trims")
 async def listar_trims(marca: str, modelo: str):
     """
-    Retorna trims/specs de um veículo via API Ninjas.
+    Retorna trims/specs de um veículo via API Ninjas. Fallback mock.
     """
     if not API_NINJAS_KEY:
-        raise HTTPException(status_code=500, detail="API_NINJAS_KEY não configurada")
+        return _get_mock_trims(marca, modelo)
     
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            f"{API_NINJAS_BASE}/cartrims",
-            params={"make": marca, "model": modelo, "limit": 10},
-            headers={"X-Api-Key": API_NINJAS_KEY},
-            timeout=10.0
-        )
-    
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Erro ao consultar trims")
-    
-    return response.json()
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{API_NINJAS_BASE}/cartrims",
+                params={"make": marca, "model": modelo, "limit": 10},
+                headers={"X-Api-Key": API_NINJAS_KEY},
+                timeout=10.0
+            )
+        if response.status_code == 200:
+            return response.json()
+    except Exception:
+        pass
+        
+    return _get_mock_trims(marca, modelo)
+
+def _get_mock_marcas():
+    return ["Acura", "Audi", "BMW", "Chevrolet", "Dodge", "Ferrari", "Fiat", "Ford", "Honda", "Hyundai", "Jeep", "Kia", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Peugeot", "Porsche", "Renault", "Subaru", "Toyota", "Volkswagen", "Volvo"]
+
+def _get_mock_modelos(marca: str):
+    if marca.lower() == "honda":
+        return ["Civic", "Accord", "Fit", "HR-V", "CR-V", "S2000"]
+    elif marca.lower() == "volkswagen":
+        return ["Golf", "Jetta", "Polo", "Passat", "Tiguan", "Up!"]
+    elif marca.lower() == "ford":
+        return ["Mustang", "Focus", "Fiesta", "Fusion", "Ranger"]
+    return ["Modelo A", "Modelo B", "Modelo C"]
+
+def _get_mock_trims(marca: str, modelo: str):
+    return [{
+        "make": marca,
+        "model": modelo,
+        "trim": f"{modelo} Base",
+        "year": "2024",
+        "body_type": "Sedan/Hatch",
+        "engine_type": "4-Cylinder",
+        "drive_type": "FWD"
+    }]
 
 
 # ========== Decodificação de VIN (NHTSA + Offline Fallback) ==========
