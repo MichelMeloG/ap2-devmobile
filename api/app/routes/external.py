@@ -76,48 +76,55 @@ async def listar_trims(marca: str, modelo: str):
     return response.json()
 
 
-# ========== NHTSA — Decodificação de VIN ==========
+# ========== API Ninjas — Decodificação de VIN ==========
 
 @router.get("/vin/{vin}")
 async def consultar_vin(vin: str):
     """
-    Decodifica um VIN (chassi) usando a API gratuita do NHTSA (governo americano).
+    Decodifica um VIN (chassi) usando a API Ninjas.
     Retorna marca, modelo, ano, motor, combustível e tipo de carroceria.
     """
     if len(vin) != 17:
         raise HTTPException(status_code=400, detail="O VIN deve ter exatamente 17 caracteres")
     
+    if not API_NINJAS_KEY:
+        raise HTTPException(status_code=500, detail="API_NINJAS_KEY não configurada")
+    
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            f"{NHTSA_BASE}/decodevinvalues/{vin}",
-            params={"format": "json"},
+            f"{API_NINJAS_BASE}/vinlookup",
+            params={"vin": vin},
+            headers={"X-Api-Key": API_NINJAS_KEY},
             timeout=15.0
         )
     
     if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Erro ao consultar NHTSA")
+        raise HTTPException(status_code=response.status_code, detail="Erro ao consultar API Ninjas")
     
     data = response.json()
     
-    if not data.get("Results") or len(data["Results"]) == 0:
-        raise HTTPException(status_code=404, detail="VIN não encontrado")
+    if isinstance(data, list):
+        if len(data) == 0:
+            raise HTTPException(status_code=404, detail="VIN não encontrado")
+        data = data[0]
     
-    result = data["Results"][0]
+    if not data or "vin" not in data:
+        raise HTTPException(status_code=404, detail="VIN não encontrado")
     
     # Filtra apenas os campos relevantes
     return {
-        "vin": vin.upper(),
-        "marca": result.get("Make", ""),
-        "modelo": result.get("Model", ""),
-        "ano": result.get("ModelYear", ""),
-        "motor": result.get("EngineModel", "") or result.get("DisplacementL", "") + "L" if result.get("DisplacementL") else "",
-        "cilindros": result.get("EngineCylinders", ""),
-        "potencia_hp": result.get("EngineHP", ""),
-        "combustivel": result.get("FuelTypePrimary", ""),
-        "carroceria": result.get("BodyClass", ""),
-        "tracao": result.get("DriveType", ""),
-        "transmissao": result.get("TransmissionStyle", ""),
-        "portas": result.get("Doors", ""),
-        "fabricante": result.get("Manufacturer", ""),
-        "pais_origem": result.get("PlantCountry", ""),
+        "vin": data.get("vin", vin).upper(),
+        "marca": data.get("make", data.get("manufacturer", "")),
+        "modelo": data.get("model", ""),
+        "ano": str(data.get("year", "")),
+        "motor": str(data.get("engine", "")) + "L" if data.get("engine") else "",
+        "cilindros": str(data.get("cylinders", "")),
+        "potencia_hp": "",
+        "combustivel": data.get("fuel_type", ""),
+        "carroceria": data.get("body_class", ""),
+        "tracao": data.get("drive_type", ""),
+        "transmissao": "",
+        "portas": str(data.get("doors", "")),
+        "fabricante": data.get("manufacturer", ""),
+        "pais_origem": data.get("country", ""),
     }
