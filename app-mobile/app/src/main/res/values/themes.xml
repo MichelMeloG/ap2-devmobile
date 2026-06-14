@@ -14,6 +14,12 @@
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:textColorHint">@color/text_hint</item>
+
+        <!-- Overrides para remover o roxo padrão do Material3 (ex: Chips selecionados) -->
+        <item name="colorPrimaryContainer">#4DFF6D00</item> <!-- Laranja Escuro Transparente -->
+        <item name="colorOnPrimaryContainer">@color/accent_primary</item>
+        <item name="colorSecondaryContainer">#4DFF6D00</item>
+        <item name="colorOnSecondaryContainer">@color/accent_primary</item>
         <item name="android:statusBarColor">@color/bg_primary</item>
         <item name="android:navigationBarColor">@color/bg_primary</item>
     </style>
