@@ -44,8 +44,19 @@ class DashboardActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
+            override fun onEditarClick(projeto: Projeto) {
+                mostrarDialogEditar(projeto)
+            }
+
             override fun onDeletarClick(projeto: Projeto) {
-                deletarProjeto(projeto.id)
+                androidx.appcompat.app.AlertDialog.Builder(this@DashboardActivity)
+                    .setTitle("Excluir Projeto")
+                    .setMessage("Tem certeza que deseja deletar o projeto '${projeto.nome}'?")
+                    .setPositiveButton("Sim") { _, _ ->
+                        deletarProjeto(projeto.id)
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
             }
         })
         recyclerViewProjetos.adapter = projetoAdapter
@@ -98,5 +109,64 @@ class DashboardActivity : AppCompatActivity() {
                 Toast.makeText(this@DashboardActivity, "Erro ao deletar", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun mostrarDialogEditar(projeto: Projeto) {
+        val layout = android.widget.LinearLayout(this)
+        layout.orientation = android.widget.LinearLayout.VERTICAL
+        layout.setPadding(50, 40, 50, 10)
+
+        val editNome = android.widget.EditText(this)
+        editNome.hint = "Nome do Projeto"
+        editNome.setText(projeto.nome)
+        layout.addView(editNome)
+
+        val editOrcamento = android.widget.EditText(this)
+        editOrcamento.hint = "Orçamento Máximo"
+        editOrcamento.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        editOrcamento.setText(projeto.orcamentoMaximo.toString())
+        layout.addView(editOrcamento)
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Editar Projeto")
+            .setView(layout)
+            .setPositiveButton("Salvar") { _, _ ->
+                val novoNome = editNome.text.toString().trim()
+                val novoOrcamentoStr = editOrcamento.text.toString().trim()
+
+                if (novoNome.isNotEmpty() && novoOrcamentoStr.isNotEmpty()) {
+                    try {
+                        val novoOrcamento = novoOrcamentoStr.toDouble()
+                        
+                        val request = com.example.appmobile.api.ProjetoRequest(
+                            nome = novoNome,
+                            orcamento_maximo = novoOrcamento,
+                            carro_id = projeto.carroId,
+                            pecas_ids = projeto.pecasIds
+                        )
+                        
+                        apiService.atualizarProjeto(projeto.id, request).enqueue(object : Callback<Projeto> {
+                            override fun onResponse(call: Call<Projeto>, response: Response<Projeto>) {
+                                if (response.isSuccessful) {
+                                    Toast.makeText(this@DashboardActivity, "Projeto atualizado", Toast.LENGTH_SHORT).show()
+                                    carregarProjetos()
+                                } else {
+                                    Toast.makeText(this@DashboardActivity, "Erro ao atualizar. Verifique se o orçamento é suficiente.", Toast.LENGTH_LONG).show()
+                                }
+                            }
+
+                            override fun onFailure(call: Call<Projeto>, t: Throwable) {
+                                Toast.makeText(this@DashboardActivity, "Erro de rede", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                    } catch (e: Exception) {
+                        Toast.makeText(this, "Orçamento inválido", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 }

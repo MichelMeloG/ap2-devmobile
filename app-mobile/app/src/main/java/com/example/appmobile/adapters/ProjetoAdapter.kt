@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ class ProjetoAdapter(
 
     interface OnProjetoClickListener {
         fun onProjetoClick(projeto: Projeto)
+        fun onEditarClick(projeto: Projeto)
         fun onDeletarClick(projeto: Projeto)
     }
 
@@ -41,6 +43,8 @@ class ProjetoAdapter(
         private val orcamentoTextView: TextView = itemView.findViewById(R.id.orcamentoProjeto)
         private val custoTextView: TextView = itemView.findViewById(R.id.custoProjeto)
         private val cardView: CardView = itemView.findViewById(R.id.cardProjeto)
+        private val buttonEditar: ImageView = itemView.findViewById(R.id.buttonEditarProjeto)
+        private val buttonDeletar: ImageView = itemView.findViewById(R.id.buttonDeletarProjeto)
 
         fun bind(projeto: Projeto, listener: OnProjetoClickListener) {
             nomeTextView.text = projeto.nome
@@ -48,6 +52,8 @@ class ProjetoAdapter(
             custoTextView.text = "Custo: R$ ${String.format("%.2f", projeto.custoTotalCalculado)}"
             
             cardView.setOnClickListener { listener.onProjetoClick(projeto) }
+            buttonEditar.setOnClickListener { listener.onEditarClick(projeto) }
+            buttonDeletar.setOnClickListener { listener.onDeletarClick(projeto) }
         }
     }
 

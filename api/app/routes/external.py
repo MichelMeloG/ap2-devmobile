@@ -22,14 +22,42 @@ async def listar_modelos(marca: str):
     """
     Retorna lista de modelos de uma marca (mock).
     """
-    if marca.lower() == "honda":
-        modelos = ["Civic", "Accord", "Fit", "HR-V", "CR-V", "S2000"]
-    elif marca.lower() == "volkswagen":
-        modelos = ["Golf", "Jetta", "Polo", "Passat", "Tiguan", "Up!"]
-    elif marca.lower() == "ford":
-        modelos = ["Mustang", "Focus", "Fiesta", "Fusion", "Ranger"]
+    m = marca.lower()
+    if m == "honda":
+        modelos = ["Civic", "Accord", "Fit", "HR-V", "CR-V", "City", "S2000", "NSX"]
+    elif m == "volkswagen":
+        modelos = ["Golf", "Jetta", "Polo", "Passat", "Tiguan", "Up!", "Nivus", "T-Cross", "Amarok"]
+    elif m == "ford":
+        modelos = ["Mustang", "Focus", "Fiesta", "Fusion", "Ranger", "Bronco", "Maverick", "Ka"]
+    elif m == "chevrolet":
+        modelos = ["Camaro", "Corvette", "Cruze", "Onix", "Tracker", "S10", "Silverado", "Equinox"]
+    elif m == "fiat":
+        modelos = ["Argo", "Cronos", "Pulse", "Fastback", "Toro", "Strada", "Mobi", "Uno", "Palio"]
+    elif m == "toyota":
+        modelos = ["Corolla", "Hilux", "Yaris", "RAV4", "Supra", "Camry", "SW4", "Prius"]
+    elif m == "nissan":
+        modelos = ["Kicks", "Versa", "Sentra", "Frontier", "Leaf", "GT-R", "370Z"]
+    elif m == "audi":
+        modelos = ["A3", "A4", "A5", "Q3", "Q5", "Q7", "R8", "e-tron", "TT"]
+    elif m == "bmw":
+        modelos = ["320i", "X1", "X3", "X5", "X6", "M3", "M4", "M5", "Z4"]
+    elif m == "mercedes-benz":
+        modelos = ["C-Class", "A-Class", "E-Class", "G-Class", "GLA", "GLC", "AMG GT"]
+    elif m == "porsche":
+        modelos = ["911", "Cayenne", "Macan", "Panamera", "Taycan", "718 Boxster", "718 Cayman"]
+    elif m == "hyundai":
+        modelos = ["HB20", "Creta", "Tucson", "Santa Fe", "Elantra", "Azera"]
+    elif m == "jeep":
+        modelos = ["Renegade", "Compass", "Wrangler", "Cherokee", "Gladiator"]
+    elif m == "dodge":
+        modelos = ["Challenger", "Charger", "Durango", "Ram 1500"]
+    elif m == "ferrari":
+        modelos = ["488 GTB", "F8 Tributo", "Roma", "Portofino", "SF90 Stradale", "LaFerrari"]
+    elif m == "lamborghini":
+        modelos = ["Huracan", "Aventador", "Urus", "Gallardo"]
     else:
-        modelos = ["Modelo A", "Modelo B", "Modelo C"]
+        modelos = ["Hatch", "Sedan", "SUV", "Pickup", "Esportivo"]
+    
     return [{"model": m} for m in modelos]
 
 @router.get("/trims")
