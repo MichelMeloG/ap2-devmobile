@@ -29,6 +29,7 @@ class DetalhesProjetoActivity : AppCompatActivity() {
     private lateinit var cardFichaTecnica: CardView
     private lateinit var textViewFichaNome: TextView
     private lateinit var textViewFichaGeracao: TextView
+    private lateinit var textViewFichaAnos: TextView
     private lateinit var progressBarOrcamento: ProgressBar
     private lateinit var textViewProgresso: TextView
     private lateinit var recyclerViewPecasDetalhes: RecyclerView
@@ -55,6 +56,7 @@ class DetalhesProjetoActivity : AppCompatActivity() {
         cardFichaTecnica = findViewById(R.id.cardFichaTecnica)
         textViewFichaNome = findViewById(R.id.textViewFichaNome)
         textViewFichaGeracao = findViewById(R.id.textViewFichaGeracao)
+        textViewFichaAnos = findViewById(R.id.textViewFichaAnos)
         progressBarOrcamento = findViewById(R.id.progressBarOrcamento)
         textViewProgresso = findViewById(R.id.textViewProgresso)
         recyclerViewPecasDetalhes = findViewById(R.id.recyclerViewPecasDetalhes)
@@ -178,6 +180,17 @@ class DetalhesProjetoActivity : AppCompatActivity() {
                         val trimName = trim.trim ?: "Motor não especificado"
                         textViewFichaNome.text = trimName.replace(" Base", "", ignoreCase = true)
                         textViewFichaGeracao.text = "${trim.generation ?: ""} - ${trim.serie ?: ""}".trim(' ', '-')
+
+                        val startYear = trim.trimStartYear ?: trim.generationYearBegin ?: ""
+                        val endYear = trim.trimEndYear ?: trim.generationYearEnd ?: ""
+                        
+                        if (startYear.isNotEmpty() && endYear.isNotEmpty() && startYear != endYear) {
+                            textViewFichaAnos.text = "Ano: $startYear a $endYear"
+                        } else if (startYear.isNotEmpty()) {
+                            textViewFichaAnos.text = "Ano: $startYear"
+                        } else {
+                            textViewFichaAnos.visibility = View.GONE
+                        }
                     }
                 }
             }
